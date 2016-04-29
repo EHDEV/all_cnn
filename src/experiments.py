@@ -347,8 +347,8 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     train_nn(train_model, validate_model, test_model,
         n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
-def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
-        batch_size=200, verbose=False):
+def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
+        batch_size=200, verbose=False, kernel_shape=(3,3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -398,54 +398,104 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     ######################
     print('... building the model')
 
+    im_size = 32
+    nstride = [1, 2]
     # Reshape matrix of rasterized images of shape (batch_size, 3 * 32 * 32)
     # to a 4D tensor, compatible with our LeNetConvPoolLayer
     layer0_input = x.reshape((batch_size, 3, 32, 32))
 
-    # TODO: Construct the first convolutional pooling layer: #BIGTODO
-    layer0 = LeNetConvPoolLayer(
+    layer0 = LeNetConvLayer(
         rng,
         input=layer0_input,
-        image_shape=(batch_size, 3, 32, 32),
-        filter_shape=(nkerns[0], 3, 5, 5),
-        poolsize=(2, 2)
+        image_shape=(batch_size, 3, im_size, im_size),
+        filter_shape=(nkerns[0], 3) + kernel_shape
     )
 
-    # TODO: Construct the second convolutional pooling layer #BIGTODO
-    layer1 = LeNetConvPoolLayer(
+    #30
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
+    
+    layer1 = LeNetConvLayer(
         rng,
         input=layer0.output,
-        image_shape=(batch_size, nkerns[0], 14, 14),
-        filter_shape=(nkerns[1], nkerns[0], 7, 7),
-        poolsize=(2, 2)
+        image_shape=(batch_size, nkerns[0], im_size, im_size),
+        filter_shape=(nkerns[0], 3) + kernel_shape
     )
 
-    # Combine Layer 0 output and Layer 1 output #BIGTODO
-    # TODO: downsample the first layer output to match the size of the second
-    # layer output.
-    layer0_output_ds = downsample.max_pool_2d(
-            input=layer0.output,
-            ds=(4,4), # TDOD: change ds
-            ignore_border=False
-    )
-    # concatenate layer
-    layer2_input = T.concatenate([layer1.output, layer0_output_ds], axis=1)
-
-    # TODO: Construct the third convolutional pooling layer #BIGTODO
-    layer2 = LeNetConvPoolLayer(
+    #28
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
+    layer2 = LeNetConvLayer(
         rng,
-        input=layer2_input,
-        image_shape=(batch_size, nkerns[0]+nkerns[1], 4, 4),
-        filter_shape=(nkerns[2], nkerns[0]+nkerns[1], 2, 2),
-        poolsize=(3, 3)
+        input=layer1.output,
+        image_shape=(batch_size, nkerns[0], im_size, im_size),
+        filter_shape=(nkerns[0], 3) + kernel_shape
+        stride=(nstride[1],nstride[1])
+    )
+    
+    #ceil(28-3)/2 + 1 = 14 
+    #14
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[1]) + 1)
+    layer3 = LeNetConvLayer(
+        rng,
+        input=layer2.output,
+        image_shape=(batch_size, nkerns[0], im_size, im_size),
+        filter_shape=(nkerns[1], 3) + kernel_shape
+        stride=(nstride[0],nstride[0])
+    )
+    
+    #ceil(14-3)+1 = 12
+    #12
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
+    layer4 = LeNetConvLayer(
+        rng,
+        input=layer3.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[1], 3) + kernel_shape
+        stride=(nstride[0],nstride[0])
     )
 
-    # the HiddenLayer being fully-connected, it operates on 2D matrices of
-    # shape (batch_size, num_pixels) (i.e matrix of rasterized images).
-    # This will generate a matrix of shape (batch_size, nkerns[2] * 1 * 1).
-    layer3_input = layer2.output.flatten(2)
+    #ceil(12-3) + 1
+    #10
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
+    layer5 = LeNetConvLayer(
+        rng,
+        input=layer4.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[1], 3) + kernel_shape
+        stride=(nstride[1],nstride[1])
+    )
+    
+    #ceil(10-3)/2 +1
+    #5
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[1]) + 1)
+    layer6 = LeNetConvLayer(
+        rng,
+        input=layer5.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[1], 3) + kernel_shape
+        stride=(nstride[0],nstride[0])
+    )
 
-    # construct a fully-connected sigmoidal layer #BIGTODO
+    #ceil(5-3)+1
+    #3
+    im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
+    layer7 = LeNetConvLayer(
+        rng,
+        input=layer6.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[1], 3) + (1,1)
+        stride=(nstride[0],nstride[0])
+    )
+
+    #3
+    layer8 = LeNetConvLayer(
+        rng,
+        input=layer7.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[2], 3) + (1,1)
+        stride=(nstride[0],nstride[0])
+    )
+    
+    layer9 
     layer3 = HiddenLayer(
         rng,
         input=layer3_input,
