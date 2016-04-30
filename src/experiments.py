@@ -64,7 +64,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     x = T.matrix('x')   # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
                         # [int] labels
-
+    pdb.set_trace()
     ######################
     # BUILD ACTUAL MODEL #
     ######################
@@ -82,7 +82,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         filter_shape=(nkerns[0], 3, 5, 5),
         poolsize=(2, 2)
     )
-
+    pdb.set_trace()
     # TODO: Construct the second convolutional pooling layer #BIGTODO
     layer1 = LeNetConvPoolLayer(
         rng,
@@ -91,6 +91,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         filter_shape=(nkerns[1], nkerns[0], 7, 7),
         poolsize=(2, 2)
     )
+    pdb.set_trace()
 
     # Combine Layer 0 output and Layer 1 output #BIGTODO
     # TODO: downsample the first layer output to match the size of the second
