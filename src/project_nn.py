@@ -326,7 +326,7 @@ class LeNetConvLayer(object):
         # "num output feature maps * filter height * filter width" /
         #   pooling size
         fan_out = (filter_shape[0] * numpy.prod(filter_shape[2:]) //
-                   numpy.prod(poolsize))
+                   numpy.prod(stride))
         # initialize weights with random weights
         W_bound = numpy.sqrt(6. / (fan_in + fan_out))
         self.W = theano.shared(
