@@ -57,7 +57,7 @@ def load_data(simple=True, theano_shared=True):
     if not os.path.exists(os.path.realpath("../../data")):
         os.makedirs(os.path.realpath("../../data"))
 
-    datapath = os.path.realpath("../../data")
+    datapath = os.path.realpath("../../data/")
 
     # datapath = os.path.join(os.path.split(__file__)[0],"../../","data")
 
