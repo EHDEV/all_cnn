@@ -408,7 +408,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer0_input,
         image_shape=(batch_size, 3, im_size, im_size),
-        filter_shape=(nkerns[0], 3) + kernel_shape
+        filter_shape=(nkerns[0], 3) + kernel_shape,
+        padding=(1, 1)
     )
 
     #30
@@ -418,7 +419,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer0.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[0], 3) + kernel_shape
+        filter_shape=(nkerns[0], 3) + kernel_shape,
+        padding=(1, 1)
     )
 
     #28
@@ -428,7 +430,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer1.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[0], 3) + kernel_shape,
-        stride=(nstride[1],nstride[1])
+        stride=(nstride[1],nstride[1]),
+        padding=(1, 1)
     )
     
     #ceil(28-3)/2 + 1 = 14 
@@ -439,7 +442,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer2.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[1], 3) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0],nstride[0]),
+        padding=(1, 1)
     )
     
     #ceil(14-3)+1 = 12
@@ -450,9 +454,10 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer3.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], 3) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0],nstride[0]),
+        padding=(1, 1)
     )
-
+    # Padding 1
     #ceil(12-3) + 1
     #10
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
@@ -461,7 +466,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer4.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], 3) + kernel_shape,
-        stride=(nstride[1],nstride[1])
+        stride=(nstride[1],nstride[1]),
+        padding=(1, 1)
     )
     
     #ceil(10-3)/2 +1
@@ -472,7 +478,8 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer5.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], 3) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0],nstride[0]),
+        padding=(1, 1)
     )
 
     #ceil(5-3)+1
@@ -487,25 +494,19 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     )
 
     #3
-    layer8 = LeNetConvLayer(
+    layer8 = LeNetConvPoolLayer(
         rng,
         input=layer7.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[2], 3) + (1,1),
-        stride=(nstride[0],nstride[0])
-    )
-    
-    layer9 
-    layer3 = HiddenLayer(
-        rng,
-        input=layer3_input,
-        n_in=nkerns[2] * 1 * 1,
-        n_out= 200,
-        activation=T.tanh
+        filter_shape=(nkerns[2], 3) + (1, 1),
+        stride=(nstride[0], nstride[0]),
+
+
     )
 
+
     # classify the values of the fully-connected sigmoidal layer
-    layer4 = LogisticRegression(input=layer3.output, n_in=200, n_out=10)
+    layer9 = LogisticRegression(input=layer8.output, n_in=200, n_out=10)
 
     # the cost we minimize during training is the NLL of the model
     cost = layer4.negative_log_likelihood(y)

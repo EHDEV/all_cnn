@@ -213,7 +213,7 @@ class LeNetConvPoolLayer(object):
     """Pool Layer of a convolutional network """
 
     def __init__(self, rng, input, filter_shape, image_shape, poolsize=(2, 2),
-        pool_ignore_border=True, stride=(1,1)):
+        pool_ignore_border=True, stride=(1,1), padding='valid'):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
 
@@ -266,21 +266,23 @@ class LeNetConvPoolLayer(object):
             filters=self.W,
             filter_shape=filter_shape,
             image_shape=image_shape,
-            subsample=stride
+            subsample=stride,
+            border_mode=padding
         )
 
         # downsample each feature map individually, using maxpooling
         pooled_out = downsample.max_pool_2d(
             input=conv_out,
             ds=poolsize,
-            ignore_border=pool_ignore_border
+            ignore_border=pool_ignore_border,
+            mode='average_inc_pad'
         )
 
         # add the bias term. Since the bias is a vector (1D array), we first
         # reshape it to a tensor of shape (1, n_filters, 1, 1). Each bias will
         # thus be broadcasted across mini-batches and feature map
         # width & height
-        self.output = T.relu(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
+        self.output = relu(pooled_out + self.b.dimshuffle('x', 0, 'x', 'x'))
 
         # store parameters of this layer
         self.params = [self.W, self.b]
@@ -292,7 +294,7 @@ class LeNetConvLayer(object):
     """Pool Layer of a convolutional network """
 
     def __init__(self, rng, input, filter_shape, image_shape,
-        pool_ignore_border=True, stride=(1,1)):
+        pool_ignore_border=True, stride=(1,1), padding='valid'):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
 
@@ -345,7 +347,8 @@ class LeNetConvLayer(object):
             filters=self.W,
             filter_shape=filter_shape,
             image_shape=image_shape,
-            subsample=stride
+            subsample=stride,
+            border_mode=padding
         )
 
         # downsample each feature map individually, using maxpooling
