@@ -20,6 +20,7 @@ def relu(x):
     """
     return T.switch(T.le(x,0), 0, x)
 
+
 class LogisticRegression(object):
     """Multi-class Logistic Regression Class
 

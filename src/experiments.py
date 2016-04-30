@@ -150,7 +150,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     )
 
     # TODO: create a list of all model parameters to be fit by gradient descent
-    params = 
+    # params =
     
     grads = T.grad(cost, params)
 
@@ -315,7 +315,7 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     )
 
     # TODO: create a list of all model parameters to be fit by gradient descent
-    params = 
+    # params =
     
     grads = T.grad(cost, params)
 
@@ -347,8 +347,8 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     train_nn(train_model, validate_model, test_model,
         n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
-def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
-        batch_size=200, verbose=False, kernel_shape=(3,3)):
+def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
+           batch_size=200, verbose=False, kernel_shape=(3,3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -427,7 +427,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer1.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[0], 3) + kernel_shape
+        filter_shape=(nkerns[0], 3) + kernel_shape,
         stride=(nstride[1],nstride[1])
     )
     
@@ -438,7 +438,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer2.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape
+        filter_shape=(nkerns[1], 3) + kernel_shape,
         stride=(nstride[0],nstride[0])
     )
     
@@ -449,7 +449,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer3.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape
+        filter_shape=(nkerns[1], 3) + kernel_shape,
         stride=(nstride[0],nstride[0])
     )
 
@@ -460,7 +460,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer4.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape
+        filter_shape=(nkerns[1], 3) + kernel_shape,
         stride=(nstride[1],nstride[1])
     )
     
@@ -471,7 +471,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer5.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape
+        filter_shape=(nkerns[1], 3) + kernel_shape,
         stride=(nstride[0],nstride[0])
     )
 
@@ -482,7 +482,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer6.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + (1,1)
+        filter_shape=(nkerns[1], 3) + (1,1),
         stride=(nstride[0],nstride[0])
     )
 
@@ -491,7 +491,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer7.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[2], 3) + (1,1)
+        filter_shape=(nkerns[2], 3) + (1,1),
         stride=(nstride[0],nstride[0])
     )
     
@@ -530,7 +530,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     )
 
     # TODO: create a list of all model parameters to be fit by gradient descent
-    params = 
+    # params =
     
     grads = T.grad(cost, params)
 
@@ -565,4 +565,3 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
 if __name__ == "__main__":
      stridedCNN_C(verbose=True)
 
-    
