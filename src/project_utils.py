@@ -93,7 +93,7 @@ def load_data(simple=True, theano_shared=True):
     #### For test purposes, we need to limit the data to maybe batch1 or even smaller
     # Commenting all except b1 and bt
 
-    b1 = scipy.io.loadmat(os.path.join(datapath, foldname, batch_1))
+    b1 = scipy.io.loadmat(datapath + foldname + '/' + batch_1)
     # b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
     # b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
     # b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
