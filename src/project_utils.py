@@ -63,8 +63,6 @@ def load_data(simple=True, theano_shared=True):
 
     def check_dataset(dataset=filename):
         # Check if dataset is in the data directory.
-        import pdb
-        pdb.set_trace()
         new_path = os.path.join(os.path.realpath("../../"),
                                 "data",
                                 dataset
@@ -73,8 +71,6 @@ def load_data(simple=True, theano_shared=True):
             from six.moves import urllib
             origin = (cifar_url + dataset)
             print('Downloading data from %s' % origin)
-            # import pdb
-            # pdb.set_trace()
             urllib.request.urlretrieve(origin, new_path)
             tfile = tarfile.open(new_path, 'r:gz')
             tfile.extractall(datapath)

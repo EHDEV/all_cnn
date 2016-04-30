@@ -15,7 +15,7 @@ import theano.tensor as T
 from theano.tensor.signal import downsample
 
 from project_utils import shared_dataset, load_data
-from project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, train_nn
+from project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, LeNetConvLayer train_nn
 import pdb
 
 
