@@ -52,8 +52,12 @@ def load_data(simple=True, theano_shared=True):
     else:
         filename = 'cifar-100-matlab.tar.gz'
         foldname = '/cifar-100-batches-mat'
-    
-    datapath = os.path.join(os.path.split(__file__)[0],"../../","data")
+
+    if not os.path.exists(os.path.realpath("../../data")):
+        os.makedirs(os.path.realpath("../../data"))
+
+    datapath = os.path.realpath("../../data")
+    # datapath = os.path.join(os.path.split(__file__)[0],"../../","data")
     
     def check_dataset(dataset):
         # Check if dataset is in the data directory.
