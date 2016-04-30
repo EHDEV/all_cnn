@@ -82,12 +82,7 @@ def load_data(simple=True, theano_shared=True):
         return new_path
 
     filename = check_dataset()
-    # tfile = tarfile.open(filename, 'r:gz')
-    # tfile.extractall(datapath)
-    # tfile.close()
 
-    # import pdb
-    # pdb.set_trace()
     batch_1 = 'data_batch_1.mat'
     batch_2 = 'data_batch_2.mat'
     batch_3 = 'data_batch_3.mat'
@@ -95,27 +90,41 @@ def load_data(simple=True, theano_shared=True):
     batch_5 = 'data_batch_5.mat'
     batch_test = 'test_batch.mat'
 
-    b1 = scipy.io.loadmat(datapath + foldname + '/' + batch_1)
-    b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
-    b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
-    b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
-    b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
+    #### For test purposes, we need to limit the data to maybe batch1 or even smaller
+    # Commenting all except b1 and bt
+
+    b1 = scipy.io.loadmat(os.path.join(datapath, foldname, batch_1))
+    # b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
+    # b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
+    # b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
+    # b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
     bt = scipy.io.loadmat(datapath + foldname + '/' + batch_test)
 
     def convert_data_format(data):
         X = data['data'] / 255.
         y = data['labels'].flatten()
-        return (X, y)
+        return X, y
 
     b1, b1_l = convert_data_format(b1)
-    b2, b2_l = convert_data_format(b2)
-    b3, b3_l = convert_data_format(b3)
-    b4, b4_l = convert_data_format(b4)
-    b5, b5_l = convert_data_format(b5)
+    # b2, b2_l = convert_data_format(b2)
+    # b3, b3_l = convert_data_format(b3)
+    # b4, b4_l = convert_data_format(b4)
+    # b5, b5_l = convert_data_format(b5)
     bt, bt_l = convert_data_format(bt)
 
-    btrain = numpy.concatenate((b1, b2, b3, b4, b5), axis=0)
-    btrain_labels = numpy.concatenate((b1_l, b2_l, b3_l, b4_l, b5_l), axis=0)
+    btrain = numpy.concatenate((b1,
+                                # b2,
+                                # b3,
+                                # b4,
+                                # b5
+                                ), axis=0)
+    btrain_labels = numpy.concatenate((
+        b1_l,
+        # b2_l,
+        # b3_l,
+        # b4_l,
+        # b5_l
+    ), axis=0)
 
     train_set = (btrain, btrain_labels)
     test_set = (bt, bt_l)
