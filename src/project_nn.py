@@ -447,6 +447,8 @@ def train_nn(train_model, validate_model, test_model,
                          this_validation_loss * 100.))
 
                 # if we got the best validation score until now
+                import pdb
+                pdb.set_trace()
                 if this_validation_loss < best_validation_loss:
 
                     #improve patience if loss improvement is good enough

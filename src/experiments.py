@@ -16,6 +16,8 @@ from theano.tensor.signal import downsample
 
 from project_utils import shared_dataset, load_data
 from project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, train_nn
+import pdb
+
 
 def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         batch_size=200, verbose=False):
@@ -347,8 +349,8 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     train_nn(train_model, validate_model, test_model,
         n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
-def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
-           batch_size=200, verbose=False, kernel_shape=(3,3)):
+def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
+             batch_size=200, verbose=False, kernel_shape=(3,3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -386,6 +388,7 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     n_valid_batches //= batch_size
     n_test_batches //= batch_size
 
+    pdb.set_trace()
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
 
@@ -564,5 +567,5 @@ def allCNN(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
 if __name__ == "__main__":
-     stridedCNN_C(verbose=True)
+     allCNN_C(verbose=True)
 
