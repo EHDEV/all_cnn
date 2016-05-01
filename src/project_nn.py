@@ -243,7 +243,7 @@ class LeNetConvPoolLayer(object):
     """Pool Layer of a convolutional network """
 
     def __init__(self, rng, input, filter_shape, image_shape, poolsize=(6, 6),
-        pool_ignore_border=True, stride=(1,1), padding='some'):
+        pool_ignore_border=True, stride=(1,1), padding='valid'):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
 
