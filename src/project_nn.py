@@ -15,10 +15,40 @@ from theano.tensor.nnet import conv2d
 from theano.tensor.signal import downsample
 
 def relu(x):
+
     """
-        Implementation of the relu activation function
+    Compute the element-wise rectified linear activation function.
+    .. versionadded:: 0.7.1
+    Parameters
+    ----------
+    x : symbolic tensor
+        Tensor to compute the activation function for.
+    alpha : scalar or tensor, optional
+        Slope for negative input, usually between 0 and 1. The default value
+        of 0 will lead to the standard rectifier, 1 will lead to
+        a linear activation function, and any value in between will give a
+        leaky rectifier. A shared variable (broadcastable against `x`) will
+        result in a parameterized rectifier with learnable slope(s).
+    Returns
+    -------
+    symbolic tensor
+        Element-wise rectifier applied to `x`.
+    Notes
+    -----
+    This is numerically equivalent to ``T.switch(x > 0, x, alpha * x)``
+    (or ``T.maximum(x, alpha * x)`` for ``alpha < 1``), but uses a faster
+    formulation or an optimized Op, so we encourage to use this function.
     """
-    return T.switch(T.le(x,0), 0, x)
+    # This is probably the fastest implementation for GPUs. Both the forward
+    # pass and the gradient get compiled into a single GpuElemwise call.
+    # TODO: Check if it's optimal for CPU as well; add an "if" clause if not.
+    # TODO: Check if there's a faster way for the gradient; create an Op if so.
+    if alpha == 0:
+        return 0.5 * (x + abs(x))
+    else:
+        f1 = 0.5 * (1 + alpha)
+        f2 = 0.5 * (1 - alpha)
+        return f1 * x + f2 * abs(x)
 
 
 class LogisticRegression(object):
@@ -342,6 +372,8 @@ class LeNetConvLayer(object):
         self.b = theano.shared(value=b_values, borrow=True)
 
         # convolve input feature maps with filters
+        import pdb
+        pdb.set_trace()
         conv_out = conv2d(
             input=input,
             filters=self.W,
