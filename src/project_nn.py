@@ -14,7 +14,7 @@ import theano.tensor as T
 from theano.tensor.nnet import conv2d
 from theano.tensor.signal import downsample
 
-def relu(x):
+def relu(x, alpha=0):
 
     """
     Compute the element-wise rectified linear activation function.
