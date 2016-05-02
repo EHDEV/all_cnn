@@ -62,7 +62,6 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     x = T.matrix('x')  # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
     # [int] labels
-    pdb.set_trace()
     ######################
     # BUILD ACTUAL MODEL #
     ######################

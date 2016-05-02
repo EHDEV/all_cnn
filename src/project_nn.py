@@ -371,8 +371,7 @@ class LeNetConvLayer(object):
         self.b = theano.shared(value=b_values, borrow=True)
 
         # convolve input feature maps with filters
-        import pdb
-        pdb.set_trace()
+
         conv_out = conv2d(
             input=input,
             filters=self.W,
