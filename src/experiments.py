@@ -79,7 +79,6 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         filter_shape=(nkerns[0], 3, 5, 5),
         poolsize=(2, 2)
     )
-    pdb.set_trace()
     # TODO: Construct the second convolutional pooling layer #BIGTODO
     layer1 = LeNetConvPoolLayer(
         rng,
@@ -88,7 +87,6 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         filter_shape=(nkerns[1], nkerns[0], 7, 7),
         poolsize=(2, 2)
     )
-    pdb.set_trace()
 
     # Combine Layer 0 output and Layer 1 output #BIGTODO
     # TODO: downsample the first layer output to match the size of the second
@@ -149,7 +147,6 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         }
     )
 
-    # TODO: create a list of all model parameters to be fit by gradient descent
     # params =
 
     grads = T.grad(cost, params)
@@ -388,7 +385,6 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     n_valid_batches //= batch_size
     n_test_batches //= batch_size
 
-    pdb.set_trace()
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
 
@@ -512,6 +508,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         poolsize=(2, 2)
     )
 
+    pdb.set_trace()
     layer10_input = layer9.output.flatten(2)
     # classify the values of the fully-connected sigmoidal layer
     layer10 = LogisticRegression(input=layer10_input, n_in=10, n_out=10)
