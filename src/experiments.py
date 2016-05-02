@@ -433,8 +433,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer1.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[0], nkerns[0]) + kernel_shape,
-        stride=(nstride[1],nstride[1]),
-        padding=(1, 1)
+        stride=(nstride[1],nstride[1])
     )
     
     #ceil(28-3)/2 + 1 = 14 
@@ -445,8 +444,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer2.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[0]) + kernel_shape,
-        stride=(nstride[0],nstride[0]),
-        padding=(1, 1)
+        stride=(nstride[0],nstride[0])
     )
     
     #ceil(14-3)+1 = 12
@@ -457,8 +455,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer3.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[0],nstride[0]),
-        padding=(1, 1)
+        stride=(nstride[0],nstride[0])
     )
     # Padding 1
     #ceil(12-3) + 1
@@ -469,8 +466,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer4.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[1],nstride[1]),
-        padding=(1, 1)
+        stride=(nstride[1],nstride[1])
     )
     
     #ceil(10-3)/2 +1
@@ -481,8 +477,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         input=layer5.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[0],nstride[0]),
-        padding=(1, 1)
+        stride=(nstride[0],nstride[0])
     )
 
     #ceil(5-3)+1
