@@ -508,7 +508,6 @@ def allCNN_C(learning_rate=0.1, n_epochs=10, nkerns=[96, 192, 10],
         poolsize=(2, 2)
     )
 
-    pdb.set_trace()
     layer10_input = layer9.output.flatten(2)
     # classify the values of the fully-connected sigmoidal layer
     layer10 = LogisticRegression(input=layer10_input, n_in=10, n_out=10)
@@ -550,6 +549,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=10, nkerns=[96, 192, 10],
         for param_i, grad_i in zip(params, grads)
         ]
 
+    pdb.set_trace()
     train_model = theano.function(
         [index],
         cost,
