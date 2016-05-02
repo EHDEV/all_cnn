@@ -423,7 +423,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer0.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[0], 3) + kernel_shape
+        filter_shape=(nkerns[0], nkerns[0]) + kernel_shape
     )
 
     #28
@@ -432,7 +432,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer1.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[0], 3) + kernel_shape,
+        filter_shape=(nkerns[0], nkerns[0]) + kernel_shape,
         stride=(nstride[1],nstride[1]),
         padding=(1, 1)
     )
