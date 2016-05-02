@@ -304,8 +304,7 @@ class LeNetConvPoolLayer(object):
         pooled_out = downsample.max_pool_2d(
             input=conv_out,
             ds=poolsize,
-            ignore_border=pool_ignore_border,
-            mode='average_inc_pad'
+            ignore_border=pool_ignore_border
         )
 
         # add the bias term. Since the bias is a vector (1D array), we first
