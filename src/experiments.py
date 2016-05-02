@@ -491,6 +491,8 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         stride=(nstride[0],nstride[0])
     )
 
+    im_size = int(numpy.ceil((im_size - 1) / nstride[0]) + 1)
+
     #3
     layer8 = LeNetConvPoolLayer(
         rng,
@@ -500,6 +502,16 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         stride=(nstride[0], nstride[0]),
     )
 
+    im_size = int(numpy.ceil((im_size - 1) / nstride[0]) + 1)
+
+
+    layer9 = LeNetConvPoolLayer(
+        rng,
+        input=layer8.output,
+        image_shape=(batch_size, nkerns[1], im_size, im_size),
+        filter_shape=(nkerns[2], nkerns[1]) + (1, 1),
+        stride=(nstride[0], nstride[0]),
+    )
 
     # classify the values of the fully-connected sigmoidal layer
     layer9 = LogisticRegression(input=layer8.output, n_in=200, n_out=10)
