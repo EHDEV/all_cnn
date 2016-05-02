@@ -511,6 +511,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[2], nkerns[1]) + (1, 1),
         stride=(nstride[0], nstride[0]),
+        poolsize=(2,2)
     )
 
     # classify the values of the fully-connected sigmoidal layer
