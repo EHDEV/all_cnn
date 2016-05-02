@@ -568,6 +568,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     ###############
     print('... training')
 
+    pdb.set_trace()
     train_nn(train_model, validate_model, test_model,
              n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
