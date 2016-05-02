@@ -451,7 +451,8 @@ def train_nn(train_model, validate_model, test_model,
 
     epoch = 0
     done_looping = False
-
+    import pdb
+    pdb.set_trace()
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in range(n_train_batches):
