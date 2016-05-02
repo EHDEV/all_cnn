@@ -539,7 +539,8 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         }
     )
 
-    params = layer10.params + layer9.params + layer8.params + layer7.params + layer6.params + layer5.params + layer4.params + layer3.params + layer2.params + layer1.params + layer0.params
+    params = layer10.params + layer9.params + layer8.params + layer7.params + layer6.params + layer5.params + \
+             layer4.params + layer3.params + layer2.params + layer1.params + layer0.params
 
     grads = T.grad(cost, params)
 
