@@ -9,18 +9,16 @@ This code is based on
 [3] http://deeplearning.net/tutorial/lenet.html
 """
 import numpy
-
 import theano
 import theano.tensor as T
 from theano.tensor.signal import downsample
-
 from project_utils import shared_dataset, load_data
 from project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, LeNetConvLayer, train_nn
 import pdb
 
 
 def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
-        batch_size=200, verbose=False):
+                 batch_size=200, verbose=False):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -61,9 +59,9 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
 
-    x = T.matrix('x')   # the data is presented as rasterized images
+    x = T.matrix('x')  # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
-                        # [int] labels
+    # [int] labels
     pdb.set_trace()
     ######################
     # BUILD ACTUAL MODEL #
@@ -97,9 +95,9 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     # TODO: downsample the first layer output to match the size of the second
     # layer output.
     layer0_output_ds = downsample.max_pool_2d(
-            input=layer0.output,
-            ds=(4,4), # TDOD: change ds
-            ignore_border=False
+        input=layer0.output,
+        ds=(4, 4),  # TDOD: change ds
+        ignore_border=False
     )
     # concatenate layer
     layer2_input = T.concatenate([layer1.output, layer0_output_ds], axis=1)
@@ -108,8 +106,8 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     layer2 = LeNetConvPoolLayer(
         rng,
         input=layer2_input,
-        image_shape=(batch_size, nkerns[0]+nkerns[1], 4, 4),
-        filter_shape=(nkerns[2], nkerns[0]+nkerns[1], 2, 2),
+        image_shape=(batch_size, nkerns[0] + nkerns[1], 4, 4),
+        filter_shape=(nkerns[2], nkerns[0] + nkerns[1], 2, 2),
         poolsize=(3, 3)
     )
 
@@ -123,7 +121,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         rng,
         input=layer3_input,
         n_in=nkerns[2] * 1 * 1,
-        n_out= 200,
+        n_out=200,
         activation=T.tanh
     )
 
@@ -154,7 +152,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
 
     # TODO: create a list of all model parameters to be fit by gradient descent
     # params =
-    
+
     grads = T.grad(cost, params)
 
     # train_model is a function that updates the model parameters by
@@ -165,7 +163,7 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     updates = [
         (param_i, param_i - learning_rate * grad_i)
         for param_i, grad_i in zip(params, grads)
-    ]
+        ]
 
     train_model = theano.function(
         [index],
@@ -183,10 +181,11 @@ def stridedCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     print('... training')
 
     train_nn(train_model, validate_model, test_model,
-        n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
-    
+             n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
+
+
 def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
-        batch_size=200, verbose=False):
+                  batch_size=200, verbose=False):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -227,9 +226,9 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
 
-    x = T.matrix('x')   # the data is presented as rasterized images
+    x = T.matrix('x')  # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
-                        # [int] labels
+    # [int] labels
 
     ######################
     # BUILD ACTUAL MODEL #
@@ -262,9 +261,9 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     # TODO: downsample the first layer output to match the size of the second
     # layer output.
     layer0_output_ds = downsample.max_pool_2d(
-            input=layer0.output,
-            ds=(4,4), # TDOD: change ds
-            ignore_border=False
+        input=layer0.output,
+        ds=(4, 4),  # TDOD: change ds
+        ignore_border=False
     )
     # concatenate layer
     layer2_input = T.concatenate([layer1.output, layer0_output_ds], axis=1)
@@ -273,8 +272,8 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     layer2 = LeNetConvPoolLayer(
         rng,
         input=layer2_input,
-        image_shape=(batch_size, nkerns[0]+nkerns[1], 4, 4),
-        filter_shape=(nkerns[2], nkerns[0]+nkerns[1], 2, 2),
+        image_shape=(batch_size, nkerns[0] + nkerns[1], 4, 4),
+        filter_shape=(nkerns[2], nkerns[0] + nkerns[1], 2, 2),
         poolsize=(3, 3)
     )
 
@@ -288,7 +287,7 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
         rng,
         input=layer3_input,
         n_in=nkerns[2] * 1 * 1,
-        n_out= 200,
+        n_out=200,
         activation=T.tanh
     )
 
@@ -319,7 +318,7 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
 
     # TODO: create a list of all model parameters to be fit by gradient descent
     # params =
-    
+
     grads = T.grad(cost, params)
 
     # train_model is a function that updates the model parameters by
@@ -330,7 +329,7 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     updates = [
         (param_i, param_i - learning_rate * grad_i)
         for param_i, grad_i in zip(params, grads)
-    ]
+        ]
 
     train_model = theano.function(
         [index],
@@ -348,10 +347,11 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[16, 512, 20],
     print('... training')
 
     train_nn(train_model, validate_model, test_model,
-        n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
+             n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
+
 
 def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
-             batch_size=200, verbose=False, kernel_shape=(3,3)):
+             batch_size=200, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -393,9 +393,9 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     # allocate symbolic variables for the data
     index = T.lscalar()  # index to a [mini]batch
 
-    x = T.matrix('x')   # the data is presented as rasterized images
+    x = T.matrix('x')  # the data is presented as rasterized images
     y = T.ivector('y')  # the labels are presented as 1D vector of
-                        # [int] labels
+    # [int] labels
 
     ######################
     # BUILD ACTUAL MODEL #
@@ -416,9 +416,9 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         padding='full'
     )
 
-    #30
+    # 30
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
-    
+
     layer1 = LeNetConvLayer(
         rng,
         input=layer0.output,
@@ -426,74 +426,74 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         filter_shape=(nkerns[0], nkerns[0]) + kernel_shape
     )
 
-    #28
+    # 28
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
     layer2 = LeNetConvLayer(
         rng,
         input=layer1.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[0], nkerns[0]) + kernel_shape,
-        stride=(nstride[1],nstride[1])
+        stride=(nstride[1], nstride[1])
     )
-    
-    #ceil(28-3)/2 + 1 = 14 
-    #14
+
+    # ceil(28-3)/2 + 1 = 14
+    # 14
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[1]) + 1)
     layer3 = LeNetConvLayer(
         rng,
         input=layer2.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[0]) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0], nstride[0])
     )
-    
-    #ceil(14-3)+1 = 12
-    #12
+
+    # ceil(14-3)+1 = 12
+    # 12
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
     layer4 = LeNetConvLayer(
         rng,
         input=layer3.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0], nstride[0])
     )
     # Padding 1
-    #ceil(12-3) + 1
-    #10
+    # ceil(12-3) + 1
+    # 10
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
     layer5 = LeNetConvLayer(
         rng,
         input=layer4.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[1],nstride[1])
+        stride=(nstride[1], nstride[1])
     )
-    
-    #ceil(10-3)/2 +1
-    #5
+
+    # ceil(10-3)/2 +1
+    # 5
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[1]) + 1)
     layer6 = LeNetConvLayer(
         rng,
         input=layer5.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
-        stride=(nstride[0],nstride[0])
+        stride=(nstride[0], nstride[0])
     )
 
-    #ceil(5-3)+1
-    #3
+    # ceil(5-3)+1
+    # 3
     im_size = int(numpy.ceil((im_size - kernel_shape[0]) / nstride[0]) + 1)
     layer7 = LeNetConvLayer(
         rng,
         input=layer6.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], nkerns[1]) + (1,1),
-        stride=(nstride[0],nstride[0])
+        filter_shape=(nkerns[1], nkerns[1]) + (1, 1),
+        stride=(nstride[0], nstride[0])
     )
 
     im_size = int(numpy.ceil((im_size - 1) / nstride[0]) + 1)
 
-    #3
+    # 3
     layer8 = LeNetConvPoolLayer(
         rng,
         input=layer7.output,
@@ -504,14 +504,13 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
 
     im_size = int(numpy.ceil((im_size - 1) / nstride[0]) + 1)
 
-
     layer9 = LeNetConvPoolLayer(
         rng,
         input=layer8.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
         filter_shape=(nkerns[2], nkerns[1]) + (1, 1),
         stride=(nstride[0], nstride[0]),
-        poolsize=(2,2)
+        poolsize=(2, 2)
     )
 
     layer10_input = layer9.output.flatten(2)
@@ -519,7 +518,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     layer10 = LogisticRegression(input=layer10_input, n_in=10, n_out=10)
 
     # the cost we minimize during training is the NLL of the model
-    cost = layer4.negative_log_likelihood(y)
+    cost = layer10.negative_log_likelihood(y)
 
     # create a function to compute the mistakes that are made by the model
     test_model = theano.function(
@@ -540,9 +539,8 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         }
     )
 
-    # TODO: create a list of all model parameters to be fit by gradient descent
-    # params =
-    
+    params = layer10.params + layer9.params + layer8.params + layer7.params + layer6.params + layer5.params + layer4.params + layer3.params + layer2.params + layer1.params + layer0.params
+
     grads = T.grad(cost, params)
 
     # train_model is a function that updates the model parameters by
@@ -553,7 +551,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     updates = [
         (param_i, param_i - learning_rate * grad_i)
         for param_i, grad_i in zip(params, grads)
-    ]
+        ]
 
     train_model = theano.function(
         [index],
@@ -571,8 +569,8 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     print('... training')
 
     train_nn(train_model, validate_model, test_model,
-        n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
+             n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
+
 
 if __name__ == "__main__":
-     allCNN_C(verbose=True)
-
+    allCNN_C(verbose=True)
