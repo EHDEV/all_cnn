@@ -444,7 +444,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer2.output,
         image_shape=(batch_size, nkerns[0], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape,
+        filter_shape=(nkerns[1], nkerns[0]) + kernel_shape,
         stride=(nstride[0],nstride[0]),
         padding=(1, 1)
     )
@@ -456,7 +456,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer3.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape,
+        filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
         stride=(nstride[0],nstride[0]),
         padding=(1, 1)
     )
@@ -468,7 +468,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer4.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape,
+        filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
         stride=(nstride[1],nstride[1]),
         padding=(1, 1)
     )
@@ -480,7 +480,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer5.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + kernel_shape,
+        filter_shape=(nkerns[1], nkerns[1]) + kernel_shape,
         stride=(nstride[0],nstride[0]),
         padding=(1, 1)
     )
@@ -492,7 +492,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer6.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[1], 3) + (1,1),
+        filter_shape=(nkerns[1], nkerns[1]) + (1,1),
         stride=(nstride[0],nstride[0])
     )
 
@@ -501,10 +501,8 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         rng,
         input=layer7.output,
         image_shape=(batch_size, nkerns[1], im_size, im_size),
-        filter_shape=(nkerns[2], 3) + (1, 1),
+        filter_shape=(nkerns[2], nkerns[1]) + (1, 1),
         stride=(nstride[0], nstride[0]),
-
-
     )
 
 
