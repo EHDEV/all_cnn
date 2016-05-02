@@ -514,8 +514,9 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
         poolsize=(2,2)
     )
 
+    layer10_input = layer9.output.flatten(2)
     # classify the values of the fully-connected sigmoidal layer
-    layer9 = LogisticRegression(input=layer8.output, n_in=200, n_out=10)
+    layer10 = LogisticRegression(input=layer10_input, n_in=10, n_out=10)
 
     # the cost we minimize during training is the NLL of the model
     cost = layer4.negative_log_likelihood(y)
