@@ -346,8 +346,8 @@ def convPoolCNN_C(learning_rate=0.1, n_epochs=100, nkerns=[16, 512, 20],
              n_train_batches, n_valid_batches, n_test_batches, n_epochs, verbose)
 
 
-def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
-             batch_size=200, verbose=False, kernel_shape=(3, 3)):
+def allCNN_C(learning_rate=0.1, n_epochs=10, nkerns=[96, 192, 10],
+             batch_size=20, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
