@@ -523,7 +523,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
     # create a function to compute the mistakes that are made by the model
     test_model = theano.function(
         [index],
-        layer4.errors(y),
+        layer10.errors(y),
         givens={
             x: test_set_x[index * batch_size: (index + 1) * batch_size],
             y: test_set_y[index * batch_size: (index + 1) * batch_size]
@@ -532,7 +532,7 @@ def allCNN_C(learning_rate=0.1, n_epochs=1000, nkerns=[96, 192, 10],
 
     validate_model = theano.function(
         [index],
-        layer4.errors(y),
+        layer10.errors(y),
         givens={
             x: valid_set_x[index * batch_size: (index + 1) * batch_size],
             y: valid_set_y[index * batch_size: (index + 1) * batch_size]
