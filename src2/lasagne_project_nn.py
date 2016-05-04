@@ -760,3 +760,9 @@ def train_nn(train_model, validate_model, test_model,
     print(('The training process for function ' +
            calframe[1][3] +
            ' ran for %.2fm' % ((end_time - start_time) / 60.)), file=sys.stderr)
+
+def errors(pred, y, threshold=0.5):
+    """Computes the binary accuracy between predictions and targets.
+    """
+    predictions = theano.tensor.ge(pred, threshold)
+    return theano.tensor.eq(predictions, targets)

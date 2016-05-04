@@ -69,7 +69,6 @@ def load_data(simple=True, theano_shared=True):
                                 "data",
                                 dataset
                                 )
-        print new_path
         if (not os.path.isfile(new_path)):
             from six.moves import urllib
             origin = (cifar_url + dataset)
