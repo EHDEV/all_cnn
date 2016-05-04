@@ -47,9 +47,11 @@ def load_data(simple=True, theano_shared=True):
 
     '''
     cifar_url = 'https://www.cs.toronto.edu/~kriz/'
+    print(simple)
     if simple:
         filename = 'cifar-10-matlab.tar.gz'
         foldname = '/cifar-10-batches-mat'
+
     else:
         filename = 'cifar-100-matlab.tar.gz'
         foldname = '/cifar-100-batches-mat'
@@ -58,7 +60,7 @@ def load_data(simple=True, theano_shared=True):
         os.makedirs(os.path.realpath("../../data"))
 
     datapath = os.path.realpath("../../data/")
-
+    
     # datapath = os.path.join(os.path.split(__file__)[0],"../../","data")
 
     def check_dataset(dataset=filename):
@@ -67,6 +69,7 @@ def load_data(simple=True, theano_shared=True):
                                 "data",
                                 dataset
                                 )
+        print new_path
         if (not os.path.isfile(new_path)):
             from six.moves import urllib
             origin = (cifar_url + dataset)
