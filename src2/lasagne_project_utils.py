@@ -146,3 +146,19 @@ def load_data(simple=True, theano_shared=True):
     # except:
     #    train_set, valid_set, test_set, dicts = pickle.load(f)
     return rval
+
+def load_cifer100():
+    train_file = '/train.mat'
+    test_file = '/test.mat'
+
+    datapath = os.path.realpath("../../data/cifar-100-matlab")
+    print(datapath)
+    train = scipy.io.loadmat(datapath + train_file)
+    test = scipy.io.loadmat(datapath + test_file)
+
+
+
+def convert_data_format(data):
+        X = data['data'] / 255.
+        y = data['labels'].flatten()
+        return X, y

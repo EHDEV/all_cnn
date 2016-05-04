@@ -1,136 +1,210 @@
 import numpy
 import theano
 import theano.tensor as T
-from theano.tensor.signal import downsample
-from project_utils import shared_dataset, load_data
-from project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, LeNetConvLayer, train_nn
-import pdb
+from lasagne_project_nn import LogisticRegression, HiddenLayer, LeNetConvPoolLayer, LeNetConvLayer, train_nn
+from lasagne_project_utils import load_data, shared_dataset
+import theano
+from __future__ import print_function
+import sys
+import os
+import time
+import numpy as np
+import numpy
+import theano
+import theano.tensor as T
+import lasagne
+import scipy
+import timeit
 
-def allCNN_C(learning_rate=0.1, n_epochs=10, nkerns=[96, 192, 10],
-             batch_size=20, verbose=False, kernel_shape=(3, 3)):
-    """
-    Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
+def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
+    assert inputs.eval().shape[0] == targets.eval().shape[0]
+    if shuffle:
+        indices = np.arange(inputs.eval().shape[0])
+        np.random.shuffle(indices)
+    for start_idx in range(0, inputs.eval().shape[0] - batchsize + 1, batchsize):
+        if shuffle:
+            excerpt = indices[start_idx:start_idx + batchsize]
+        else:
+            excerpt = slice(start_idx, start_idx + batchsize)
+        yield inputs[excerpt], targets[excerpt]
 
-    :type learning_rate: float
-    :param learning_rate: learning rate used (factor for the stochastic
-    gradient)
+def build_cnn(input_var=None):
 
-    :type n_epochs: int
-    :param n_epochs: maximal number of epochs to run the optimizer
+    network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
+    print(lasagne.layers.get_output_shape(network))
 
-    :type nkerns: list of ints
-    :param nkerns: number of kernels on each layer
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=96, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                W=lasagne.init.GlorotUniform(),
+                pad=1,
+                stride=(1,1))
 
-    :type batch_size: int
-    :param batch_szie: number of examples in minibatch.
+    print(lasagne.layers.get_output_shape(network))
 
-    :type verbose: boolean
-    :param verbose: to print out epoch summary or not to.
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=96, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                pad=1,
+                stride=(1,1))
 
-    """
+    print(lasagne.layers.get_output_shape(network))
 
-    rng = numpy.random.RandomState(23455)
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=96, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                pad=1,
+                stride=(2,2))
+
+    print(lasagne.layers.get_output_shape(network))
+
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                pad=1,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                pad=1,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                pad=1,
+                stride=(2,2))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                stride=(1,1))
+
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(1, 1),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=10, filter_size=(1, 1),
+                nonlinearity=lasagne.nonlinearities.rectify,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Pool2DLayer(network, pool_size=(6, 6), mode='average_inc_pad')
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.DenseLayer(
+                lasagne.layers.dropout(network, p=.5),
+                num_units=10,
+                nonlinearity=lasagne.nonlinearities.softmax)
+    print(lasagne.layers.get_output_shape(network))
+
+    return network
+
+def all_cnn(verbose=False):
 
     datasets = load_data()
+    rng = np.random.RandomState(23455)
 
-    train_set_x, train_set_y = datasets[0]
-    valid_set_x, valid_set_y = datasets[1]
-    test_set_x, test_set_y = datasets[2]
+    X_train, y_train = datasets[0]
+    X_val, y_val = datasets[1]
+    X_test, y_test = datasets[2]
+    #X_train, y_train, X_val, y_val, X_test, y_test = load_dataset()
 
-    # compute number of minibatches for training, validation and testing
-    n_train_batches = train_set_x.get_value(borrow=True).shape[0]
-    n_valid_batches = valid_set_x.get_value(borrow=True).shape[0]
-    n_test_batches = test_set_x.get_value(borrow=True).shape[0]
+    n_train_batches = X_train.get_value(borrow=True).shape[0]
+    n_valid_batches = X_val.get_value(borrow=True).shape[0]
+    n_test_batches = X_test.get_value(borrow=True).shape[0]
     n_train_batches //= batch_size
     n_valid_batches //= batch_size
     n_test_batches //= batch_size
 
-    # allocate symbolic variables for the data
 
     x = T.tensor4('x')
     y = T.ivector('y')
 
-    # Create a loss expression for training, i.e., a scalar objective we want
-    # to minimize (for our multi-class problem, it is the cross-entropy loss):
-    prediction = lasagne.layers.get_output(network)
-    loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
-    loss = loss.mean()
-    # We could add some weight decay as well here, see lasagne.regularization.
+    channel = 3
+    imsize= 32
 
-    # Create update expressions for training, i.e., how to modify the
-    # parameters at each training step. Here, we'll use Stochastic Gradient
-    # Descent (SGD) with Nesterov momentum, but Lasagne offers plenty more.
+    test_size = len(X_test.eval())
+    train_size = len(X_train.eval())
+    val_size = len(X_val.eval())
+
+    num_epochs = 2
+
+    X_train = X_train.reshape((test_size,3,32,32))
+    X_test = X_test.reshape((train_size, 3, 32, 32))
+    X_val = X_val.reshape((val_size, 3, 32, 32))
+
+    network = build_cnn(x)
+
+    train_prediction = lasagne.layers.get_output(network)
+    train_loss = lasagne.objectives.categorical_crossentropy(train_prediction, y)
+    train_loss = train_loss.mean()
+
     params = lasagne.layers.get_all_params(network, trainable=True)
     updates = lasagne.updates.nesterov_momentum(
-            loss, params, learning_rate=0.01, momentum=0.9)
+            train_loss, params, learning_rate=0.01, momentum=0.9)
 
+    val_prediction = lasagne.layers.get_output(network)
+    val_loss = lasagne.objectives.categorical_crossentropy(val_prediction, y)
+    val_loss = val_loss.mean()
     # Create a loss expression for validation/testing. The crucial difference
     # here is that we do a deterministic forward pass through the network,
     # disabling dropout layers.
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
-    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
-                                                            target_var)
+    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction, y)
+
     test_loss = test_loss.mean()
     # As a bonus, also create an expression for the classification accuracy:
-    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), y),
                       dtype=theano.config.floatX)
 
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
-    train_fn = theano.function([input_var, target_var], loss, updates=updates)
-
-    # Compile a second function computing the validation loss and accuracy:
-    val_fn = theano.function([input_var, target_var], [test_loss, test_acc])
-
-    # Finally, launch the training loop.
-    print("Starting training...")
-    # We iterate over epochs:
-    for epoch in range(num_epochs):
-        # In each epoch, we do a full pass over the training data:
-        train_err = 0
-        train_batches = 0
-        start_time = time.time()
-        for batch in iterate_minibatches(X_train, y_train, 500, shuffle=True):
-            inputs, targets = batch
-            train_err += train_fn(inputs, targets)
-            train_batches += 1
-
-        # And a full pass over the validation data:
-        val_err = 0
-        val_acc = 0
-        val_batches = 0
-        for batch in iterate_minibatches(X_val, y_val, 500, shuffle=False):
-            inputs, targets = batch
-            err, acc = val_fn(inputs, targets)
-            val_err += err
-            val_acc += acc
-            val_batches += 1
-
-        # Then we print the results for this epoch:
-        print("Epoch {} of {} took {:.3f}s".format(
-            epoch + 1, num_epochs, time.time() - start_time))
-        print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
-        print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
-        print("  validation accuracy:\t\t{:.2f} %".format(
-            val_acc / val_batches * 100))
-
-    # After training, we compute and print the test error:
-    test_err = 0
-    test_acc = 0
-    test_batches = 0
-    for batch in iterate_minibatches(X_test, y_test, 500, shuffle=False):
-        inputs, targets = batch
-        err, acc = val_fn(inputs, targets)
-        test_err += err
-        test_acc += acc
-        test_batches += 1
-    print("Final results:")
-    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
-    print("  test accuracy:\t\t{:.2f} %".format(
-        test_acc / test_batches * 100))
+    train_fn = theano.function([index],
+                train_loss,
+                updates=updates,
+                givens={
+                    x: X_train[index * batch_size: (index + 1) * batch_size],
+                    y: y_train[index * batch_size: (index + 1) * batch_size]
+                }
 
 
-    network = build_cnn(input_var)
+            )
+
+    val_fn = theano.function(
+            [index],
+            val_loss,
+            givens={
+                x: X_val[index * batch_size: (index + 1) * batch_size],
+                y: y_val[index * batch_size: (index + 1) * batch_size]
+            }
+        )
+
+    test_fn = theano.function(
+            [index],
+            [test_loss, test_acc],
+            givens={
+                x: X_test[index * batch_size: (index + 1) * batch_size],
+                y: y_test[index * batch_size: (index + 1) * batch_size]
+            }
+        )
+
+    train_nn(train_fn, val_fn, test_fn,
+            n_train_batches, n_valid_batches, n_test_batches, num_epochs,
+            verbose=verbose)
+
+
 
 if __name__ == "__main__":
     allCNN_C(verbose=True)
