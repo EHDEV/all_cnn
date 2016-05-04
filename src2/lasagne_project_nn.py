@@ -765,4 +765,4 @@ def errors(pred, y, threshold=0.5):
     """Computes the binary accuracy between predictions and targets.
     """
     predictions = theano.tensor.ge(pred, threshold)
-    return T.mean(T.neq(predictions, targets))
+    return T.mean(T.neq(predictions, y))
