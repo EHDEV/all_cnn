@@ -11,7 +11,7 @@ import lasagne
 import scipy
 import timeit
 import inspect
-from lasagne_project_nn import categorical_accuracy, all_CNN_C
+from lasagne_project_nn import categorical_accuracy, all_CNN_C, train_nn
 
 def run_experiment(learning_rate=0.1, n_epochs=20, nkerns=[96, 192, 10],
              batch_size=200, verbose=False, kernel_shape=(3, 3)):
