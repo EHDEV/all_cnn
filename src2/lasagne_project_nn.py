@@ -466,7 +466,7 @@ def Strided_CNN_C(input_var=None):
 
     return network
 
-def ConvPool_CNN(input_var=None):
+def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
     print(lasagne.layers.get_output_shape(network))
@@ -554,13 +554,15 @@ def ConvPool_CNN(input_var=None):
 
     return network
 
-def All_CNN_C(input_var=None):
+def all_CNN_C(input_var=None):
 
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=96, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.2),
+                num_filters=96, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 W=lasagne.init.GlorotUniform(),
                 pad=1,
@@ -586,7 +588,8 @@ def All_CNN_C(input_var=None):
 
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.5),
+                num_filters=192, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 pad=1,
                 stride=(1,1))
@@ -605,10 +608,12 @@ def All_CNN_C(input_var=None):
                 nonlinearity=lasagne.nonlinearities.rectify,
                 pad=1,
                 stride=(2,2))
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.2),
+                num_filters=192, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 stride=(1,1))
 
@@ -634,7 +639,6 @@ def All_CNN_C(input_var=None):
                 num_units=10,
                 nonlinearity=lasagne.nonlinearities.softmax)
     print(lasagne.layers.get_output_shape(network))
-
     return network
 
 def train_nn(train_model, validate_model, test_model,
@@ -681,15 +685,14 @@ def train_nn(train_model, validate_model, test_model,
                                   # on the validation set; in this case we
                                   # check every epoch
 
-    best_validation_loss = numpy.inf
+    best_validation_loss = np.inf
     best_iter = 0
     test_score = 0.
     start_time = timeit.default_timer()
 
     epoch = 0
     done_looping = False
-    import pdb
-    pdb.set_trace()
+
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in range(n_train_batches):
@@ -705,18 +708,17 @@ def train_nn(train_model, validate_model, test_model,
                 # compute zero-one loss on validation set
                 validation_losses = [validate_model(i) for i
                                      in range(n_valid_batches)]
-                this_validation_loss = numpy.mean(validation_losses)
+                this_validation_loss = np.mean(validation_losses)
 
                 if verbose:
-                    print('epoch %i, minibatch %i/%i, validation error %f %%' %
+                    print('epoch %i, minibatch %i/%i, validation error (loss) %f %%' %
                         (epoch,
                          minibatch_index + 1,
                          n_train_batches,
                          this_validation_loss * 100.))
 
                 # if we got the best validation score until now
-                import pdb
-                pdb.set_trace()
+
                 if this_validation_loss < best_validation_loss:
 
                     #improve patience if loss improvement is good enough
@@ -733,14 +735,14 @@ def train_nn(train_model, validate_model, test_model,
                         test_model(i)
                         for i in range(n_test_batches)
                     ]
-                    test_score = numpy.mean(test_losses)
-
+                    test_score = np.mean(test_losses[0])
+                    test_accuracy = np.mean(test_losses[1])
                     if verbose:
-                        print(('     epoch %i, minibatch %i/%i, test error of '
-                               'best model %f %%') %
+                        print(('    epoch %i, minibatch %i/%i, test error (loss) of '
+                               'best model %f %%. Test accuracy of %f %%') %
                               (epoch, minibatch_index + 1,
                                n_train_batches,
-                               test_score * 100.))
+                               test_score * 100 , test_accuracy * 100))
 
             if patience <= iter:
                 done_looping = True
