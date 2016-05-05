@@ -69,6 +69,7 @@ def run_experiment(learning_rate=0.1, n_epochs=20, nkerns=[96, 192, 10],
     X_val = X_val.reshape((1000, 3, imsize, imsize))
 
     network = all_CNN_C(x)
+    
     train_prediction = lasagne.layers.get_output(network)
     train_loss = lasagne.objectives.categorical_crossentropy(train_prediction, y)
     train_loss = train_loss.mean()

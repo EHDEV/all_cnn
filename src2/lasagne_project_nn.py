@@ -7,8 +7,10 @@ from __future__ import print_function
 import timeit
 import inspect
 import sys
-import numpy
+import numpy as np
 
+import lasagne
+import scipy
 import theano
 import theano.tensor as T
 from theano.tensor.nnet import conv2d
@@ -78,7 +80,7 @@ class LogisticRegression(object):
         """
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
         self.W = theano.shared(
-            value=numpy.zeros(
+            value=np.zeros(
                 (n_in, n_out),
                 dtype=theano.config.floatX
             ),
@@ -87,7 +89,7 @@ class LogisticRegression(object):
         )
         # initialize the biases b as a vector of n_out 0s
         self.b = theano.shared(
-            value=numpy.zeros(
+            value=np.zeros(
                 (n_out,),
                 dtype=theano.config.floatX
             ),
@@ -180,7 +182,7 @@ class HiddenLayer(object):
 
         Hidden unit activation is given by: tanh(dot(input,W) + b)
 
-        :type rng: numpy.random.RandomState
+        :type rng: np.random.RandomState
         :param rng: a random number generator used to initialize weights
 
         :type input: theano.tensor.dmatrix
@@ -211,10 +213,10 @@ class HiddenLayer(object):
         #        We have no info for other function, so we use the same as
         #        tanh.
         if W is None:
-            W_values = numpy.asarray(
+            W_values = np.asarray(
                 rng.uniform(
-                    low=-numpy.sqrt(6. / (n_in + n_out)),
-                    high=numpy.sqrt(6. / (n_in + n_out)),
+                    low=-np.sqrt(6. / (n_in + n_out)),
+                    high=np.sqrt(6. / (n_in + n_out)),
                     size=(n_in, n_out)
                 ),
                 dtype=theano.config.floatX
@@ -225,7 +227,7 @@ class HiddenLayer(object):
             W = theano.shared(value=W_values, name='W', borrow=True)
 
         if b is None:
-            b_values = numpy.zeros((n_out,), dtype=theano.config.floatX)
+            b_values = np.zeros((n_out,), dtype=theano.config.floatX)
             b = theano.shared(value=b_values, name='b', borrow=True)
 
         self.W = W
@@ -247,7 +249,7 @@ class LeNetConvPoolLayer(object):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
 
-        :type rng: numpy.random.RandomState
+        :type rng: np.random.RandomState
         :param rng: a random number generator used to initialize weights
 
         :type input: theano.tensor.dtensor4
@@ -270,16 +272,16 @@ class LeNetConvPoolLayer(object):
 
         # there are "num input feature maps * filter height * filter width"
         # inputs to each hidden unit
-        fan_in = numpy.prod(filter_shape[1:])
+        fan_in = np.prod(filter_shape[1:])
         # each unit in the lower layer receives a gradient from:
         # "num output feature maps * filter height * filter width" /
         #   pooling size
-        fan_out = (filter_shape[0] * numpy.prod(filter_shape[2:]) //
-                   numpy.prod(poolsize))
+        fan_out = (filter_shape[0] * np.prod(filter_shape[2:]) //
+                   np.prod(poolsize))
         # initialize weights with random weights
-        W_bound = numpy.sqrt(6. / (fan_in + fan_out))
+        W_bound = np.sqrt(6. / (fan_in + fan_out))
         self.W = theano.shared(
-            numpy.asarray(
+            np.asarray(
                 rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
                 dtype=theano.config.floatX
             ),
@@ -287,7 +289,7 @@ class LeNetConvPoolLayer(object):
         )
 
         # the bias is a 1D tensor -- one bias per output feature map
-        b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
+        b_values = np.zeros((filter_shape[0],), dtype=theano.config.floatX)
         self.b = theano.shared(value=b_values, borrow=True)
 
         # convolve input feature maps with filters
@@ -327,7 +329,7 @@ class LeNetConvLayer(object):
         """
         Allocate a LeNetConvPoolLayer with shared variable internal parameters.
 
-        :type rng: numpy.random.RandomState
+        :type rng: np.random.RandomState
         :param rng: a random number generator used to initialize weights
 
         :type input: theano.tensor.dtensor4
@@ -350,16 +352,16 @@ class LeNetConvLayer(object):
 
         # there are "num input feature maps * filter height * filter width"
         # inputs to each hidden unit
-        fan_in = numpy.prod(filter_shape[1:])
+        fan_in = np.prod(filter_shape[1:])
         # each unit in the lower layer receives a gradient from:
         # "num output feature maps * filter height * filter width" /
         #   pooling size
-        fan_out = (filter_shape[0] * numpy.prod(filter_shape[2:]) //
-                   numpy.prod(stride))
+        fan_out = (filter_shape[0] * np.prod(filter_shape[2:]) //
+                   np.prod(stride))
         # initialize weights with random weights
-        W_bound = numpy.sqrt(6. / (fan_in + fan_out))
+        W_bound = np.sqrt(6. / (fan_in + fan_out))
         self.W = theano.shared(
-            numpy.asarray(
+            np.asarray(
                 rng.uniform(low=-W_bound, high=W_bound, size=filter_shape),
                 dtype=theano.config.floatX
             ),
@@ -367,7 +369,7 @@ class LeNetConvLayer(object):
         )
 
         # the bias is a 1D tensor -- one bias per output feature map
-        b_values = numpy.zeros((filter_shape[0],), dtype=theano.config.floatX)
+        b_values = np.zeros((filter_shape[0],), dtype=theano.config.floatX)
         self.b = theano.shared(value=b_values, borrow=True)
 
         # convolve input feature maps with filters
@@ -401,7 +403,6 @@ class LeNetConvLayer(object):
         self.input = input
         
 def Strided_CNN_C(input_var=None):
-
 
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
     print(lasagne.layers.get_output_shape(network))
@@ -469,6 +470,8 @@ def Strided_CNN_C(input_var=None):
 
 def ConvPool_CNN_C(input_var=None):
 
+    imsize = 32
+    
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
     print(lasagne.layers.get_output_shape(network))
 
@@ -558,6 +561,7 @@ def ConvPool_CNN_C(input_var=None):
 def all_CNN_C(input_var=None):
 
     imsize = 32
+    
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=input_var)
 
     print(lasagne.layers.get_output_shape(network))
