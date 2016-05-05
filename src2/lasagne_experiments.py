@@ -1,6 +1,6 @@
+from __future__ import print_function
 from lasagne_project_utils import load_data, shared_dataset
 import theano
-from __future__ import print_function
 import sys
 import os
 import time
