@@ -796,7 +796,6 @@ def categorical_accuracy(predictions, targets, top_k=1):
         targets = theano.tensor.argmax(targets, axis=-1)
     elif targets.ndim != predictions.ndim - 1:
         raise TypeError('rank mismatch between targets and predictions')
-
     if top_k == 1:
         # standard categorical accuracy
         top = theano.tensor.argmax(predictions, axis=-1)
