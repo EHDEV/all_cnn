@@ -800,7 +800,7 @@ def categorical_accuracy(predictions, targets, top_k=1):
     if top_k == 1:
         # standard categorical accuracy
         top = theano.tensor.argmax(predictions, axis=-1)
-        return theano.tensor.eq(top, targets)
+        return theano.tensor.neq(top, targets)
     else:
         # top-k accuracy
         top = theano.tensor.argsort(predictions, axis=-1)
