@@ -11,6 +11,15 @@ import scipy.io
 import theano
 import theano.tensor as T
 
+def convert_data_format_10(data):
+    X = data['data'] / 255.
+    y = data['labels'].flatten()
+    return X, y
+
+def convert_data_format_100(data):
+    X = data['data'] / 255.
+    y = data['coarse_labels'].flatten()
+    return X, y
 
 def shared_dataset(data_xy, borrow=True):
     """ Function that loads the dataset into shared variables
@@ -54,7 +63,7 @@ def load_data(simple=True, theano_shared=True):
 
     else:
         filename = 'cifar-100-matlab.tar.gz'
-        foldname = '/cifar-100-batches-mat'
+        foldname = '/cifar-100-matlab'
 
     if not os.path.exists(os.path.realpath("../../data")):
         os.makedirs(os.path.realpath("../../data"))
@@ -82,54 +91,63 @@ def load_data(simple=True, theano_shared=True):
 
     filename = check_dataset()
 
-    batch_1 = 'data_batch_1.mat'
-    batch_2 = 'data_batch_2.mat'
-    batch_3 = 'data_batch_3.mat'
-    batch_4 = 'data_batch_4.mat'
-    batch_5 = 'data_batch_5.mat'
-    batch_test = 'test_batch.mat'
+    if simple:
+        batch_1 = 'data_batch_1.mat'
+        batch_2 = 'data_batch_2.mat'
+        batch_3 = 'data_batch_3.mat'
+        batch_4 = 'data_batch_4.mat'
+        batch_5 = 'data_batch_5.mat'
+        batch_test = 'test_batch.mat'
 
-    #### For test purposes, we need to limit the data to maybe batch1 or even smaller
-    # Commenting all except b1 and bt
+        #### For test purposes, we need to limit the data to maybe batch1 or even smaller
+        # Commenting all except b1 and bt
 
-    b1 = scipy.io.loadmat(datapath + foldname + '/' + batch_1)
-    # b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
-    # b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
-    # b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
-    # b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
-    bt = scipy.io.loadmat(datapath + foldname + '/' + batch_test)
+        b1 = scipy.io.loadmat(datapath + foldname + '/' + batch_1)
+        # b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
+        # b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
+        # b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
+        # b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
+        bt = scipy.io.loadmat(datapath + foldname + '/' + batch_test)
 
-    def convert_data_format(data):
-        X = data['data'] / 255.
-        y = data['labels'].flatten()
-        return X, y
+        b1, b1_l = convert_data_format_10(b1)
+        # b2, b2_l = convert_data_format_10(b2)
+        # b3, b3_l = convert_data_format_10(b3)
+        # b4, b4_l = convert_data_format_10(b4)
+        # b5, b5_l = convert_data_format_10(b5)
+        bt, bt_l = convert_data_format_10(bt)
 
-    b1, b1_l = convert_data_format(b1)
-    # b2, b2_l = convert_data_format(b2)
-    # b3, b3_l = convert_data_format(b3)
-    # b4, b4_l = convert_data_format(b4)
-    # b5, b5_l = convert_data_format(b5)
-    bt, bt_l = convert_data_format(bt)
+        btrain = numpy.concatenate((b1,
+                                    # b2,
+                                    # b3,
+                                    # b4,
+                                    # b5
+                                    ), axis=0)
+        btrain_labels = numpy.concatenate((
+            b1_l,
+            # b2_l,
+            # b3_l,
+            # b4_l,
+            # b5_l
+        ), axis=0)
 
-    btrain = numpy.concatenate((b1,
-                                # b2,
-                                # b3,
-                                # b4,
-                                # b5
-                                ), axis=0)
-    btrain_labels = numpy.concatenate((
-        b1_l,
-        # b2_l,
-        # b3_l,
-        # b4_l,
-        # b5_l
-    ), axis=0)
+        train_set = (btrain, btrain_labels)
+        test_set = (bt, bt_l)
 
-    train_set = (btrain, btrain_labels)
-    test_set = (bt, bt_l)
-
+    else:
+        batch_train = 'train.mat'
+        batch_test = 'test.mat'
+    
+        btr = scipy.io.loadmat(datapath + foldname + '/' + batch_train)
+        btst = scipy.io.loadmat(datapath + foldname + '/' + batch_test)
+    
+        btrain, btrain_labels = convert_data_format_100(btr)
+        btest, btest_labels = convert_data_format_100(btst)
+  
+        train_set = (btrain, btrain_labels)
+        test_set = (btest, btest_labels)
+    
     train_set_len = len(train_set[1])
-
+    
     # Extract validation dataset from train dataset
     valid_set = [x[-(train_set_len // 10):] for x in train_set]
     train_set = [x[:-(train_set_len // 10)] for x in train_set]
@@ -149,19 +167,3 @@ def load_data(simple=True, theano_shared=True):
     # except:
     #    train_set, valid_set, test_set, dicts = pickle.load(f)
     return rval
-
-def load_cifer100():
-    train_file = '/train.mat'
-    test_file = '/test.mat'
-
-    datapath = os.path.realpath("../../data/cifar-100-matlab")
-    print(datapath)
-    train = scipy.io.loadmat(datapath + train_file)
-    test = scipy.io.loadmat(datapath + test_file)
-
-
-
-def convert_data_format(data):
-        X = data['data'] / 255.
-        y = data['labels'].flatten()
-        return X, y
