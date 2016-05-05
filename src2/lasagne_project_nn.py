@@ -402,6 +402,7 @@ class LeNetConvLayer(object):
         
 def Strided_CNN_C(input_var=None):
 
+
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
     print(lasagne.layers.get_output_shape(network))
 
@@ -556,6 +557,7 @@ def ConvPool_CNN_C(input_var=None):
 
 def all_CNN_C(input_var=None):
 
+    imsize = 32
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=input_var)
 
     print(lasagne.layers.get_output_shape(network))
