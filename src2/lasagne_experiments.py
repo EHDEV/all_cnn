@@ -9,7 +9,7 @@ from lasagne_project_nn import categorical_accuracy
 from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
-def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
+def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
                    batch_size=128, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
@@ -123,7 +123,7 @@ def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e
 
     train_nn(train_fn, val_fn, test_fn,
              n_train_batches, n_valid_batches, n_test_batches, num_epochs,
-             verbose=True)
+             verbose=verbose)
 
 
 if __name__ == "__main__":
