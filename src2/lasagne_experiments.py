@@ -72,7 +72,7 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     # Regularization
     l2_penalty = lasagne.regularization.regularize_network_params(network, lasagne.regularization.l2)
-    # train_loss += lambda_decay * l2_penalty
+    train_loss += lambda_decay * l2_penalty
 
     params = lasagne.layers.get_all_params(network, trainable=True)
     updates = lasagne.updates.nesterov_momentum(
