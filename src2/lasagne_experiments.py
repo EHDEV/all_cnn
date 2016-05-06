@@ -10,7 +10,7 @@ from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_n
 
 
 def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
-                   batch_size=200, verbose=False, kernel_shape=(3, 3)):
+                   batch_size=128, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -139,4 +139,4 @@ if __name__ == "__main__":
         else:
             raise NotImplementedError
 
-        run_experiment(lr=0.01, batch_size=200, verbose=True, conv_arch=conv_architecture)
+        run_experiment(lr=0.01, batch_size=200, verbose=True, num_epochs=128, conv_arch=conv_architecture)
