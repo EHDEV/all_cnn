@@ -52,107 +52,16 @@ def relu(x, alpha=0):
         f2 = 0.5 * (1 - alpha)
         return f1 * x + f2 * abs(x)
 
-
-class LogisticRegression(object):
-    """Multi-class Logistic Regression Class
-
-    The logistic regression is fully described by a weight matrix :math:`W`
-    and bias vector :math:`b`. Classification is done by projecting data
-    points onto a set of hyperplanes, the distance to which is used to
-    determine a class membership probability.
-    """
-
-    def __init__(self, input, n_in, n_out):
-        """ Initialize the parameters of the logistic regression
-
-        :type input: theano.tensor.TensorType
-        :param input: symbolic variable that describes the input of the
-                      architecture (one minibatch)
-
-        :type n_in: int
-        :param n_in: number of input units, the dimension of the space in
-                     which the datapoints lie
-
-        :type n_out: int
-        :param n_out: number of output units, the dimension of the space in
-                      which the labels lie
-
-        """
-        # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
-        self.W = theano.shared(
-            value=np.zeros(
-                (n_in, n_out),
-                dtype=theano.config.floatX
-            ),
-            name='W',
-            borrow=True
-        )
-        # initialize the biases b as a vector of n_out 0s
-        self.b = theano.shared(
-            value=np.zeros(
-                (n_out,),
-                dtype=theano.config.floatX
-            ),
-            name='b',
-            borrow=True
-        )
-
-        # symbolic expression for computing the matrix of class-membership
-        # probabilities
-        # Where:
-        # W is a matrix where column-k represent the separation hyperplane for
-        # class-k
-        # x is a matrix where row-j  represents input training sample-j
-        # b is a vector where element-k represent the free parameter of
-        # hyperplane-k
-        self.p_y_given_x = T.nnet.softmax(T.dot(input, self.W) + self.b)
-
-        # symbolic description of how to compute prediction as class whose
-        # probability is maximal
-        self.y_pred = T.argmax(self.p_y_given_x, axis=1)
-
-        # parameters of the model
-        self.params = [self.W, self.b]
-
-        # keep track of model input
-        self.input = input
-
-    def negative_log_likelihood(self, y):
-        """Return the mean of the negative log-likelihood of the prediction
-        of this model under a given target distribution.
-
-        .. math::
-
-            \frac{1}{|\mathcal{D}|} \mathcal{L} (\theta=\{W,b\}, \mathcal{D}) =
-            \frac{1}{|\mathcal{D}|} \sum_{i=0}^{|\mathcal{D}|}
-                \log(P(Y=y^{(i)}|x^{(i)}, W,b)) \\
-            \ell (\theta=\{W,b\}, \mathcal{D})
-
-        :type y: theano.tensor.TensorType
-        :param y: corresponds to a vector that gives for each example the
-                  correct label
-
-        Note: we use the mean instead of the sum so that
-              the learning rate is less dependent on the batch size
-        """
-        # y.shape[0] is (symbolically) the number of rows in y, i.e.,
-        # number of examples (call it n) in the minibatch
-        # T.arange(y.shape[0]) is a symbolic vector which will contain
-        # [0,1,2,... n-1] T.log(self.p_y_given_x) is a matrix of
-        # Log-Probabilities (call it LP) with one row per example and
-        # one column per class LP[T.arange(y.shape[0]),y] is a vector
-        # v containing [LP[0,y[0]], LP[1,y[1]], LP[2,y[2]], ...,
-        # LP[n-1,y[n-1]]] and T.mean(LP[T.arange(y.shape[0]),y]) is
-        # the mean (across minibatch examples) of the elements in v,
-        # i.e., the mean log-likelihood across the minibatch.
-        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
-
         
 def Strided_CNN_C(input_var=None):
 
     imsize = 32
 
-    network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=input_var)
+    network = lasagne.layers.InputLayer(
+        shape=(None, 3, imsize, imsize),
+        stride=(1,1), pad=1,
+        input_var=input_var)
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
@@ -230,7 +139,7 @@ def ConvPool_CNN_C(input_var=None):
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=96, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.2), num_filters=96, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 W=lasagne.init.GlorotUniform(),
                 pad=1,
@@ -254,11 +163,18 @@ def ConvPool_CNN_C(input_var=None):
 
     print(lasagne.layers.get_output_shape(network))
     
-    network = lasagne.layers.MaxPool2DLayer(network, pool_size=(3, 3), stride=2,pad=1)
+    network = lasagne.layers.MaxPool2DLayer(
+        network,
+        pool_size=(3, 3),
+        stride=2,
+        pad=1)
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.5),
+                num_filters=192,
+                filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
@@ -270,6 +186,7 @@ def ConvPool_CNN_C(input_var=None):
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
@@ -283,7 +200,9 @@ def ConvPool_CNN_C(input_var=None):
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.5),
+                num_filters=192,
+                filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
 
@@ -293,15 +212,21 @@ def ConvPool_CNN_C(input_var=None):
                 network, num_filters=192, filter_size=(1, 1),
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=10, filter_size=(1, 1),
                 nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
+
     print(lasagne.layers.get_output_shape(network))
 
-    network = lasagne.layers.Pool2DLayer(network, pool_size=(6, 6), mode='average_inc_pad')
+    network = lasagne.layers.Pool2DLayer(
+        network,
+        pool_size=(6, 6),
+        mode='average_inc_pad')
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.DenseLayer(
