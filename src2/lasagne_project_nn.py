@@ -51,7 +51,68 @@ def relu(x, alpha=0):
         f2 = 0.5 * (1 - alpha)
         return f1 * x + f2 * abs(x)
 
-        
+def ConvPool_CNN_A(input_var=None):
+    imsize = 32
+
+    network = lasagne.layers.InputLayer(
+        shape=(None, 3, imsize, imsize),
+        stride=(1,1), pad=1,
+        input_var=None)
+
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=96, filter_size=(5, 5),
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
+                W=lasagne.init.GlorotUniform(),
+                pad=1,
+                stride=(1,1))
+
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.MaxPool2DLayer(network, pool_size=(3, 3), stride=2,pad=1)
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(5, 5),
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
+                pad=1,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.MaxPool2DLayer(network, pool_size=(3, 3), stride=2,pad=2)
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(3, 3),
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
+                stride=(1,1))
+
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=192, filter_size=(1, 1),
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Conv2DLayer(
+                network, num_filters=10, filter_size=(1, 1),
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
+                stride=(1,1))
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.Pool2DLayer(network, pool_size=(6, 6), mode='average_inc_pad')
+    print(lasagne.layers.get_output_shape(network))
+
+    network = lasagne.layers.DenseLayer(
+                lasagne.layers.dropout(network, p=.5),
+                num_units=10,
+                nonlinearity=lasagne.nonlinearities.softmax)
+    print(lasagne.layers.get_output_shape(network))
+    
+    return network
+
 def Strided_CNN_C(input_var=None):
 
     imsize = 32
