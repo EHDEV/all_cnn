@@ -409,7 +409,7 @@ def Strided_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 W=lasagne.init.GlorotUniform(),
                 pad=1,
                 stride=(1,1))
@@ -418,7 +418,7 @@ def Strided_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(2,2))
 
@@ -426,34 +426,34 @@ def Strided_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(2,2))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
 
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=10, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
@@ -477,7 +477,7 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 W=lasagne.init.GlorotUniform(),
                 pad=1,
                 stride=(1,1))
@@ -486,7 +486,7 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
 
@@ -494,7 +494,7 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
 
@@ -505,7 +505,7 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
@@ -513,14 +513,14 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
@@ -530,20 +530,20 @@ def ConvPool_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
 
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=10, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
@@ -569,7 +569,7 @@ def all_CNN_C(input_var=None):
     network = lasagne.layers.Conv2DLayer(
                 lasagne.layers.DropoutLayer(network, p=0.2),
                 num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 W=lasagne.init.GlorotUniform(),
                 pad=1,
                 stride=(1,1))
@@ -578,7 +578,7 @@ def all_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
 
@@ -586,7 +586,7 @@ def all_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=96, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(2,2))
 
@@ -596,7 +596,7 @@ def all_CNN_C(input_var=None):
     network = lasagne.layers.Conv2DLayer(
                 lasagne.layers.DropoutLayer(network, p=0.5),
                 num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
@@ -604,14 +604,14 @@ def all_CNN_C(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 pad=1,
                 stride=(2,2))
 
@@ -620,20 +620,20 @@ def all_CNN_C(input_var=None):
     network = lasagne.layers.Conv2DLayer(
                 lasagne.layers.DropoutLayer(network, p=0.2),
                 num_filters=192, filter_size=(3, 3),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
 
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=192, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
                 network, num_filters=10, filter_size=(1, 1),
-                nonlinearity=lasagne.nonlinearities.rectify,
+                nonlinearity=lasagne.nonlinearities.leaky_rectify,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
 
