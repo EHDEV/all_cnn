@@ -152,7 +152,7 @@ def Strided_CNN_C(input_var=None):
 
     imsize = 32
 
-    network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
+    network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=input_var)
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
@@ -173,7 +173,8 @@ def Strided_CNN_C(input_var=None):
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.5),
+                num_filters=192, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 pad=1,
                 stride=(1,1))
@@ -187,7 +188,8 @@ def Strided_CNN_C(input_var=None):
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=192, filter_size=(3, 3),
+                lasagne.layers.DropoutLayer(network, p=0.5),
+                num_filters=192, filter_size=(3, 3),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 stride=(1,1))
 
@@ -220,7 +222,11 @@ def ConvPool_CNN_C(input_var=None):
 
     imsize = 32
     
-    network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=x)
+    network = lasagne.layers.InputLayer(
+        shape=(None, 3, imsize, imsize),
+        stride=(1,1), pad=1,
+        input_var=input_var)
+
     print(lasagne.layers.get_output_shape(network))
 
     network = lasagne.layers.Conv2DLayer(

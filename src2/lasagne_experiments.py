@@ -1,16 +1,9 @@
 from __future__ import print_function
 from lasagne_project_utils import load_data, shared_dataset
-import theano
-import sys
-import os
-import time
 import numpy as np
 import theano
 import theano.tensor as T
 import lasagne
-import scipy
-import timeit
-import inspect
 from lasagne_project_nn import categorical_accuracy, all_CNN_C, train_nn
 
 def run_experiment(lr=0.1, n_epochs=20, nkerns=[96, 192, 10],
