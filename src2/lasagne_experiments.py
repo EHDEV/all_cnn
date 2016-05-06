@@ -6,7 +6,7 @@ import theano.tensor as T
 import lasagne
 from lasagne_project_nn import categorical_accuracy, all_CNN_C, train_nn
 
-def run_experiment(lr=0.1, n_epochs=20, nkerns=[96, 192, 10],
+def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
              batch_size=200, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
@@ -130,5 +130,5 @@ def run_experiment(lr=0.1, n_epochs=20, nkerns=[96, 192, 10],
 if __name__ == "__main__":
     
     #if len(sys.argv) > 1:
-    run_experiment(lr = 0.1, batch_size=200, verbose=True)
+    run_experiment(lr = 0.01, batch_size=200, verbose=True)
     
