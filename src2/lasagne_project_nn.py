@@ -297,7 +297,7 @@ def ConvPool_CNN_C(input_var=None, filter_size=(3,3)):
 
     return network
 
-def all_CNN_C(input_var=None, filter_size=(3,3), filter_size=(3,3)):
+def all_CNN_C(input_var=None, filter_size=(3,3)):
 
     imsize = 32
     
