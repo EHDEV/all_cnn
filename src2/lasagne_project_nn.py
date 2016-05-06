@@ -490,13 +490,13 @@ def train_nn(train_model, validate_model, test_model,
                         for i in range(n_test_batches)
                     ]
                     test_score = np.mean(test_losses[0])
-                    test_accuracy = np.mean(test_losses[1])
+                    #test_accuracy = np.mean(test_losses[1])
                     if verbose:
                         print(('    epoch %i, minibatch %i/%i, test error (loss) of '
-                               'best model %f %%. Test accuracy of %f %%') %
+                               'best model %f %%.') %
                               (epoch, minibatch_index + 1,
                                n_train_batches,
-                               test_score * 100 , test_accuracy * 100))
+                               test_score * 100))
 
             if patience <= iter:
                 done_looping = True

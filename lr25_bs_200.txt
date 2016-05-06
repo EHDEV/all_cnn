@@ -1,0 +1,15 @@
+True
+(None, 3, 32, 32)
+(None, 96, 32, 32)
+(None, 96, 32, 32)
+(None, 96, 16, 16)
+(None, 192, 16, 16)
+(None, 192, 16, 16)
+(None, 192, 8, 8)
+(None, 192, 6, 6)
+(None, 192, 6, 6)
+(None, 10, 6, 6)
+(None, 10, 1, 1)
+(None, 10)
+training @ iter =  0
+epoch 1, minibatch 45/45, validation error (loss) 89.300000 %
