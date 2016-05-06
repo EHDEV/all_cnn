@@ -72,7 +72,7 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     # Regularization
     l2_penalty = lasagne.regularization.regularize_network_params(network, lasagne.regularization.l2)
-    train_loss += lambda_decay * l2_penalty
+    # train_loss += lambda_decay * l2_penalty
 
     params = lasagne.layers.get_all_params(network, trainable=True)
     updates = lasagne.updates.nesterov_momentum(
@@ -141,5 +141,5 @@ if __name__ == "__main__":
     print("Hyperparameters: ")
     print(
         "Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, \nfilter_size: {}, \nFilters: {}, \nweight_decay: {}".format(
-            conv_architecture.__name__, .05, 64, 350, (3, 3), [96, 192, 10], .001))
-    run_experiment(lr=0.05, batch_size=64, verbose=True, num_epochs=350, conv_arch=conv_architecture)
+            conv_architecture.__name__, .01, 64, 350, (3, 3), [96, 192, 10], .001))
+    run_experiment(lr=0.01, batch_size=64, verbose=True, num_epochs=350, conv_arch=conv_architecture)
