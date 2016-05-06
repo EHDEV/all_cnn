@@ -141,5 +141,5 @@ if __name__ == "__main__":
     print("Hyperparameters: ")
     print(
         "Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, \nfilter_size: {}, \nFilters: {}, \nweight_decay: {}".format(
-            conv_architecture.__name__, .1, 128, 350, (3, 3), [96, 192, 10], .001))
-    run_experiment(lr=0.1, batch_size=128, verbose=True, num_epochs=350, conv_arch=conv_architecture)
+            conv_architecture.__name__, .05, 128, 350, (3, 3), [96, 192, 10], .001))
+    run_experiment(lr=0.05, batch_size=128, verbose=True, num_epochs=350, conv_arch=conv_architecture)
