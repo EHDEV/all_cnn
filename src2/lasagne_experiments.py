@@ -1,6 +1,7 @@
 from __future__ import print_function
 from lasagne_project_utils import load_data, shared_dataset
 import numpy as np
+import sys
 import theano
 import theano.tensor as T
 import lasagne
