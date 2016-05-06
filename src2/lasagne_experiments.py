@@ -6,7 +6,7 @@ import theano.tensor as T
 import lasagne
 import sys
 from lasagne_project_nn import categorical_accuracy
-from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C#, train_nn
+from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
 def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
@@ -124,128 +124,6 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     train_nn(train_fn, val_fn, test_fn,
              n_train_batches, n_valid_batches, n_test_batches, num_epochs,
              verbose=verbose)
-
-def train_nn(train_model, validate_model, test_model,
-            n_train_batches, n_valid_batches, n_test_batches, n_epochs,
-            verbose=True):
-    """
-    Wrapper function for training and test THEANO model
-
-    :type train_model: Theano.function
-    :param train_model:
-
-    :type validate_model: Theano.function
-    :param validate_model:
-
-    :type test_model: Theano.function
-    :param test_model:
-
-    :type n_train_batches: int
-    :param n_train_batches: number of training batches
-
-    :type n_valid_batches: int
-    :param n_valid_batches: number of validation batches
-
-    :type n_test_batches: int
-    :param n_test_batches: number of testing batches
-
-    :type n_epochs: int
-    :param n_epochs: maximal number of epochs to run the optimizer
-
-    :type verbose: boolean
-    :param verbose: to print out epoch summary or not to
-
-    """
-
-    # early-stopping parameters
-    patience = 1000000  # look as this many examples regardless
-    patience_increase = 2  # wait this much longer when a new best is
-                           # found
-    improvement_threshold = 0.85  # a relative improvement of this much is
-                                   # considered significant
-    validation_frequency = min(n_train_batches, patience // 2)
-                                  # go through this many
-                                  # minibatche before checking the network
-                                  # on the validation set; in this case we
-                                  # check every epoch
-
-    best_validation_loss = np.inf
-    best_iter = 0
-    test_score = 0.
-    start_time = timeit.default_timer()
-
-    epoch = 0
-    done_looping = False
-
-    while (epoch < n_epochs) and (not done_looping):
-        epoch = epoch + 1
-        for minibatch_index in range(n_train_batches):
-
-            iter = (epoch - 1) * n_train_batches + minibatch_index
-
-            if (iter % 100 == 0) and verbose:
-                print('training @ iter = ', iter)
-            cost_ij = train_model(minibatch_index)
-
-            if (iter + 1) % validation_frequency == 0:
-
-                # compute zero-one loss on validation set
-                validation_losses = [validate_model(i) for i
-                                     in range(n_valid_batches)]
-                this_validation_loss = np.mean(validation_losses)
-
-                if verbose:
-                    print('epoch %i, minibatch %i/%i, validation error (loss) %f %%' %
-                        (epoch,
-                         minibatch_index + 1,
-                         n_train_batches,
-                         this_validation_loss * 100.))
-
-                # if we got the best validation score until now
-
-                if this_validation_loss < best_validation_loss:
-
-                    #improve patience if loss improvement is good enough
-                    if this_validation_loss < best_validation_loss *  \
-                       improvement_threshold:
-                        patience = max(patience, iter * patience_increase)
-
-                    # save best validation score and iteration number
-                    best_validation_loss = this_validation_loss
-                    best_iter = iter
-
-                    # test it on the test set
-                    test_losses = [
-                        test_model(i)
-                        for i in range(n_test_batches)
-                    ]
-                    test_score = np.mean(test_losses[0])
-                    #test_accuracy = np.mean(test_losses[1])
-                    if verbose:
-                        print(('    epoch %i, minibatch %i/%i, test error (loss) of '
-                               'best model %f %%.') %
-                              (epoch, minibatch_index + 1,
-                               n_train_batches,
-                               test_score * 100))
-
-            if patience <= iter:
-                done_looping = True
-                break
-
-    end_time = timeit.default_timer()
-
-    # Retrieve the name of function who invokes train_nn() (caller's name)
-    curframe = inspect.currentframe()
-    calframe = inspect.getouterframes(curframe, 2)
-
-    # Print out summary
-    print('Optimization complete.')
-    print('Best validation score of %f %% obtained at iteration %i, '
-          'with test performance %f %%' %
-          (best_validation_loss * 100., best_iter + 1, test_score * 100.))
-    print(('The training process for function ' +
-           calframe[1][3] +
-           ' ran for %.2fm' % ((end_time - start_time) / 60.)), file=sys.stderr)
 
 
 if __name__ == "__main__":
