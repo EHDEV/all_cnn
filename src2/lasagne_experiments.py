@@ -48,6 +48,8 @@ def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e
     n_test_batches //= batch_size
 
     index = T.lscalar()  # index to a [mini]batch
+    lr_mul = T.lscalar() # Learning rate multiplier
+
 
     x = T.tensor4('x')
     y = T.ivector('y')
@@ -75,7 +77,7 @@ def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e
 
     params = lasagne.layers.get_all_params(network, trainable=True)
     updates = lasagne.updates.nesterov_momentum(
-        train_loss, params, learning_rate=lr, momentum=0.9)
+        train_loss, params, learning_rate=lr_mul, momentum=0.9)
 
     val_prediction = lasagne.layers.get_output(network)
     val_loss = categorical_accuracy(val_prediction, y)
@@ -93,7 +95,7 @@ def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e
 
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
-    train_fn = theano.function([index],
+    train_fn = theano.function([index, lr_mul],
                                train_loss,
                                updates=updates,
                                givens={
@@ -122,7 +124,7 @@ def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e
 
     train_nn(train_fn, val_fn, test_fn,
              n_train_batches, n_valid_batches, n_test_batches, num_epochs,
-             verbose=True)
+             verbose=True, lr=lr)
 
 
 if __name__ == "__main__":

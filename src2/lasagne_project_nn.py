@@ -328,7 +328,7 @@ def all_CNN_C(input_var=None):
 
 def train_nn(train_model, validate_model, test_model,
             n_train_batches, n_valid_batches, n_test_batches, n_epochs,
-            verbose = True):
+            verbose = True, lr=0.1):
     """
     Wrapper function for training and test THEANO model
 
@@ -380,13 +380,16 @@ def train_nn(train_model, validate_model, test_model,
 
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
+        if epoch == 200:
+            lr = lr * 0.1
+
         for minibatch_index in range(n_train_batches):
 
             iter = (epoch - 1) * n_train_batches + minibatch_index
 
             if (iter % 100 == 0) and verbose:
                 print('training @ iter = ', iter)
-            cost_ij = train_model(minibatch_index)
+            cost_ij = train_model(minibatch_index, lr)
 
             if (iter + 1) % validation_frequency == 0:
 
