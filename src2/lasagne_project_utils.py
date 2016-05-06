@@ -103,30 +103,30 @@ def load_data(simple=True, theano_shared=True):
 
         b1 = scipy.io.loadmat(datapath + foldname + '/' + batch_1)
         b2 = scipy.io.loadmat(datapath + foldname + '/' + batch_2)
-        # b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
-        # b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
-        # b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
+        b3 = scipy.io.loadmat(datapath + foldname + '/' + batch_3)
+        b4 = scipy.io.loadmat(datapath + foldname + '/' + batch_4)
+        b5 = scipy.io.loadmat(datapath + foldname + '/' + batch_5)
         bt = scipy.io.loadmat(datapath + foldname + '/' + batch_test)
 
         b1, b1_l = convert_data_format_10(b1)
         b2, b2_l = convert_data_format_10(b2)
-        # b3, b3_l = convert_data_format_10(b3)
-        # b4, b4_l = convert_data_format_10(b4)
-        # b5, b5_l = convert_data_format_10(b5)
+        b3, b3_l = convert_data_format_10(b3)
+        b4, b4_l = convert_data_format_10(b4)
+        b5, b5_l = convert_data_format_10(b5)
         bt, bt_l = convert_data_format_10(bt)
 
         btrain = numpy.concatenate((b1,
                                     b2,
-                                    # b3,
-                                    # b4,
-                                    # b5
+                                    b3,
+                                    b4,
+                                    b5
                                     ), axis=0)
         btrain_labels = numpy.concatenate((
             b1_l,
             b2_l,
-            # b3_l,
-            # b4_l,
-            # b5_l
+            b3_l,
+            b4_l,
+            b5_l
         ), axis=0)
 
         train_set = (btrain, btrain_labels)
