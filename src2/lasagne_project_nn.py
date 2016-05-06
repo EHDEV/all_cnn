@@ -8,7 +8,6 @@ import timeit
 import inspect
 import sys
 import numpy as np
-
 import lasagne
 import scipy
 import theano

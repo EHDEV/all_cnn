@@ -4,6 +4,7 @@ import numpy as np
 import theano
 import theano.tensor as T
 import lasagne
+import sys
 from lasagne_project_nn import categorical_accuracy
 from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
