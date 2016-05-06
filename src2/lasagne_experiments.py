@@ -138,5 +138,8 @@ if __name__ == "__main__":
             conv_architecture = ConvPool_CNN_C
         else:
             raise NotImplementedError
-
-        run_experiment(lr=0.01, batch_size=200, verbose=True, num_epochs=128, conv_arch=conv_architecture)
+    print("Hyperparameters: ")
+    print(
+        "Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, filter_size: {}, \nFilters: {}, weight_decay: {}".format(
+            conv_architecture.__name__, .1, 128, (3, 3), [96, 192, 10], .001))
+    run_experiment(lr=0.1, batch_size=200, verbose=True, num_epochs=128, conv_arch=conv_architecture)
