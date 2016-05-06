@@ -4,10 +4,12 @@ import numpy as np
 import theano
 import theano.tensor as T
 import lasagne
-from lasagne_project_nn import categorical_accuracy, all_CNN_C, train_nn
+from lasagne_project_nn import categorical_accuracy
+from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
-def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
-             batch_size=200, verbose=False, kernel_shape=(3, 3)):
+
+def run_experiment(lr=0.01, num_epochs=50, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
+                   batch_size=200, verbose=False, kernel_shape=(3, 3)):
     """
     Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
 
@@ -30,7 +32,6 @@ def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
     """
 
     datasets = load_data()
-    batch_size = 200
 
     rng = np.random.RandomState(23455)
 
@@ -57,16 +58,13 @@ def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
     data_size = X_train.eval().shape[0]
     tdata_size = X_test.eval().shape[0]
     vdata_size = X_val.eval().shape[0]
-    
-    num_epochs = 50
-    lambda_decay = 1e-3
 
     X_train = X_train.reshape((data_size, 3, imsize, imsize))
     X_test = X_test.reshape((tdata_size, 3, imsize, imsize))
     X_val = X_val.reshape((vdata_size, 3, imsize, imsize))
 
     network = all_CNN_C(x)
-    
+
     train_prediction = lasagne.layers.get_output(network)
     train_loss = lasagne.objectives.categorical_crossentropy(train_prediction, y)
     train_loss = train_loss.mean()
@@ -90,19 +88,19 @@ def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
 
     test_loss = test_loss.mean()
     # As a bonus, also create an expression for the classification accuracy:
-    #test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), y),
+    # test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), y),
     #                  dtype=theano.config.floatX)
 
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
     train_fn = theano.function([index],
-                       train_loss,
-                       updates=updates,
-                       givens={
-                           x: X_train[index * batch_size: (index + 1) * batch_size],
-                           y: y_train[index * batch_size: (index + 1) * batch_size]
-                   }
-            )
+                               train_loss,
+                               updates=updates,
+                               givens={
+                                   x: X_train[index * batch_size: (index + 1) * batch_size],
+                                   y: y_train[index * batch_size: (index + 1) * batch_size]
+                               }
+                               )
 
     val_fn = theano.function(
         [index],
@@ -123,12 +121,21 @@ def run_experiment(lr=0.01, n_epochs=20, nkerns=[96, 192, 10],
     )
 
     train_nn(train_fn, val_fn, test_fn,
-            n_train_batches, n_valid_batches, n_test_batches, num_epochs,
-            verbose = True)
+             n_train_batches, n_valid_batches, n_test_batches, num_epochs,
+             verbose=True)
 
 
 if __name__ == "__main__":
-    
-    #if len(sys.argv) > 1:
-    run_experiment(lr = 0.01, batch_size=200, verbose=True)
-    
+
+    conv_architecture = ConvPool_CNN_C
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'all':
+            conv_architecture = all_CNN_C
+        elif sys.argv[1] == 'strided':
+            conv_architecture = Strided_CNN_C
+        elif sys.argv[1] == 'convpool':
+            conv_architecture = ConvPool_CNN_C
+        else:
+            raise NotImplementedError
+
+    run_experiment(lr=0.01, batch_size=200, verbose=True, conv_arch=conv_architecture)
