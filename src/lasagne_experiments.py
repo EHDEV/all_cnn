@@ -9,7 +9,7 @@ from lasagne_project_nn import errors
 from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
-def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
+def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C, n_class=10,
                    batch_size=128, verbose=False, filter_size=(3, 3)):
     """
     Wrapper function for testing the all convolutional networks implemented here
@@ -39,6 +39,8 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     :type weight_decay: float
     :param weight_decay: L2 regularization parameter
 
+    :type n_class: int
+    :param n_class: Number of classes/output units of final layer (10 vs. 100)
 
     """
 
@@ -158,4 +160,4 @@ if __name__ == "__main__":
     print(
         "Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, \nfilter_size: {}, \nFilters: {}, \nweight_decay: {}".format(
             conv_architecture.__name__, .01, 64, 350, (3, 3), [96, 192, 10], .001))
-    run_experiment(lr=0.01, batch_size=64, verbose=True, num_epochs=350, conv_arch=conv_architecture)
+    run_experiment(lr=0.01, batch_size=64, verbose=True, num_epochs=350, n_class=10, conv_arch=conv_architecture)
