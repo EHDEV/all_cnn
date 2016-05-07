@@ -10,9 +10,9 @@ from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_n
 
 
 def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C,
-                   batch_size=128, verbose=False, kernel_shape=(3, 3)):
+                   batch_size=128, verbose=False, filter_size=(3, 3)):
     """
-    Wrapper function for testing Multi-Stage ConvNet on SVHN dataset
+    Wrapper function for testing the all convolutional networks implemented here
 
     :type lr: float
     :param lr: learning rate used (factor for the stochastic
@@ -29,6 +29,16 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     :type verbose: boolean
     :param verbose: to print out epoch summary or not to.
+
+    :type filter_size: tuple(int)
+    :param filter_size: size of the filters.
+
+    :type conv_arch: function
+    :param verbose: Convolutional Network to run
+
+    :type weight_decay: float
+    :param weight_decay: L2 regularization parameter
+
 
     """
 
@@ -64,7 +74,13 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     X_test = X_test.reshape((tdata_size, 3, imsize, imsize))
     X_val = X_val.reshape((vdata_size, 3, imsize, imsize))
 
+    # Building the all conv network
+
     network = all_CNN_C(x)
+
+    # Loss and prediction calculation
+    # Training loss function used is Categorical Cross Entropy
+    # which computes the categorical cross-entropy between predictions and targets.
 
     train_prediction = lasagne.layers.get_output(network)
     train_loss = lasagne.objectives.categorical_crossentropy(train_prediction, y)
@@ -95,13 +111,13 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
     train_fn = theano.function([index],
-                               train_loss,
-                               updates=updates,
-                               givens={
-                                   x: X_train[index * batch_size: (index + 1) * batch_size],
-                                   y: y_train[index * batch_size: (index + 1) * batch_size]
-                               }
-                               )
+           train_loss,
+           updates=updates,
+           givens={
+               x: X_train[index * batch_size: (index + 1) * batch_size],
+               y: y_train[index * batch_size: (index + 1) * batch_size]
+         }
+    )
 
     val_fn = theano.function(
         [index],
