@@ -157,7 +157,7 @@ def load_data(simple=True, theano_shared=True, small=True):
     if small:
         valid_set = [x[np.random.choice(len(valid_set[1]) // 10, replace=False)] for x in valid_set]
         train_set = [x[np.random.choice(train_set_len // 10, replace=False)] for x in train_set]
-        test_set = [[x[np.random.choice(test_set_len // 10, replace=False)] for x in test_set]]
+        test_set = [[x[np.random.choice(len(test_set[1]) // 10, replace=False)] for x in test_set]]
 
     if theano_shared:
         test_set_x, test_set_y = shared_dataset(test_set)
