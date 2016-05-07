@@ -80,14 +80,14 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     val_prediction = lasagne.layers.get_output(network)
     val_loss = errors(val_prediction, y)
-    val_loss = val_loss.mean()
+    # val_loss = val_loss.mean()
     # Create a loss expression for validation/testing. The crucial difference
     # here is that we do a deterministic forward pass through the network,
     # disabling dropout layers.
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
     test_loss = errors(test_prediction, y)
 
-    test_loss = test_loss.mean()
+    # test_loss = test_loss.mean()
     # As a bonus, also create an expression for the classification accuracy:
     # test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), y),
     #                  dtype=theano.config.floatX)
