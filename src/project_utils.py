@@ -47,7 +47,7 @@ def shared_dataset(data_xy, borrow=True):
     return shared_x, T.cast(shared_y, 'int32')
 
 
-def load_data(simple=True, theano_shared=True):
+def load_data(simple=True, theano_shared=True, small=True):
     '''
     Load the ATIS dataset
 
@@ -152,14 +152,17 @@ def load_data(simple=True, theano_shared=True):
     train_set = [x[:-(train_set_len // 10)] for x in train_set]
 
     if theano_shared:
-        test_set_x, test_set_y = shared_dataset(test_set)
-        valid_set_x, valid_set_y = shared_dataset(valid_set)
-        train_set_x, train_set_y = shared_dataset(train_set)
+        test_set_x, test_set_y = shared_dataset(test_set[0: test_set.shape[0] // 10] if small else test_set)
+        valid_set_x, valid_set_y = shared_dataset(valid_set[0: valid_set.shape[0] // 10] if small else valid_set)
+        train_set_x, train_set_y = shared_dataset(train_set[0: train_set.shape[0] // 10] if small else train_set)
 
         rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
                 (test_set_x, test_set_y)]
     else:
-        rval = [train_set, valid_set, test_set]
+        rval = [
+            train_set[0: train_set.shape[0] // 10] if small else train_set,
+            valid_set[0: valid_set.shape[0] // 10] if small else valid_set,
+            test_set[0: test_set.shape[0] // 10] if small else test_set]
 
     # try:
     #    train_set, valid_set, test_set, dicts = pickle.load(f, encoding='latin1')
