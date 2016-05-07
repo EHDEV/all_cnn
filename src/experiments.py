@@ -1,12 +1,12 @@
 from __future__ import print_function
-from lasagne_project_utils import load_data, shared_dataset
+from project_utils import load_data, shared_dataset
 import numpy as np
 import theano
 import theano.tensor as T
 import lasagne
 import sys
-from lasagne_project_nn import errors
-from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
+from project_nn import errors
+from project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
 def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C, n_class=10,
