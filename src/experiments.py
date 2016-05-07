@@ -10,7 +10,7 @@ from project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
 def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C, n_class=10,
-                   batch_size=128, verbose=False, filter_size=(3, 3)):
+                   batch_size=128, verbose=False, filter_size=(3, 3), small=True):
     """
     Wrapper function for testing the all convolutional networks implemented here
 
@@ -49,11 +49,30 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     rng = np.random.RandomState(23455)
 
-    X_train, y_train = datasets[0]
-    X_val, y_val = datasets[1]
-    X_test, y_test = datasets[2]
-    # X_train, y_train, X_val, y_val, X_test, y_test = load_dataset()
+    if small:
+        X_train, y_train = datasets[0]
+        X_val, y_val = datasets[1]
+        X_test, y_test = datasets[2]
 
+        data_size = X_train.eval().shape[0] // 10
+        tdata_size = X_test.eval().shape[0] // 10
+        vdata_size = X_val.eval().shape[0] // 10
+
+        X_train, y_train = (X_train[0:data_size], y_train[0:data_size])
+        X_val, y_val = (X_val[0:data_size], y_val[0:data_size])
+        X_test, y_test = (X_test[0:data_size], y_test[0:data_size])
+
+    else:
+        X_train, y_train = datasets[0]
+        X_val, y_val = datasets[1]
+        X_test, y_test = datasets[2]
+
+        data_size = X_train.eval().shape[0]
+        tdata_size = X_test.eval().shape[0]
+        vdata_size = X_val.eval().shape[0]
+
+    print("Train Data size: {} \n Validation Data Size: {} \n Test Data Size: {}".format(data_size, vdata_size,
+                                                                                         tdata_size))
     n_train_batches = X_train.get_value(borrow=True).shape[0]
     n_valid_batches = X_val.get_value(borrow=True).shape[0]
     n_test_batches = X_test.get_value(borrow=True).shape[0]
@@ -69,17 +88,13 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     channel = 3
     imsize = 32
 
-    data_size = X_train.eval().shape[0]
-    tdata_size = X_test.eval().shape[0]
-    vdata_size = X_val.eval().shape[0]
-
     X_train = X_train.reshape((data_size, channel, imsize, imsize))
     X_test = X_test.reshape((tdata_size, channel, imsize, imsize))
     X_val = X_val.reshape((vdata_size, channel, imsize, imsize))
 
     # Building the all conv network
 
-    network = all_CNN_C(x)
+    network = all_CNN_C(x, filter_size=filter_size, n_class=n_class)
 
     # Loss and prediction calculation
     # Training loss function used is Categorical Cross Entropy
@@ -114,13 +129,13 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
     train_fn = theano.function([index],
-           train_loss,
-           updates=updates,
-           givens={
-               x: X_train[index * batch_size: (index + 1) * batch_size],
-               y: y_train[index * batch_size: (index + 1) * batch_size]
-         }
-    )
+                               train_loss,
+                               updates=updates,
+                               givens={
+                                   x: X_train[index * batch_size: (index + 1) * batch_size],
+                                   y: y_train[index * batch_size: (index + 1) * batch_size]
+                               }
+                               )
 
     val_fn = theano.function(
         [index],
@@ -158,7 +173,10 @@ if __name__ == "__main__":
         else:
             raise NotImplementedError
     print("Hyperparameters: ")
-    print(
-        "Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, \nfilter_size: {}, \nFilters: {}, \nweight_decay: {}".format(
-            conv_architecture.__name__, .01, 64, 350, (3, 3), [96, 192, 10], .001))
-    run_experiment(lr=0.01, batch_size=64, verbose=True, num_epochs=350, n_class=10, conv_arch=conv_architecture)
+    print("Conv_architecture: {}, \nlearning_rate: {}, \nbatch_size: {}, \nEpochs: {}, "
+          "\nfilter_size: {}, \nFilters: {}, \nweight_decay: {}".format(
+        conv_architecture.__name__, .01, 64, 350, (3, 3), [96, 192, 10], .001)
+    )
+
+    run_experiment(lr=0.01, batch_size=64, verbose=True, num_epochs=350, small=True,
+                   n_class=10, filter_size=(3, 3), conv_arch=conv_architecture)
