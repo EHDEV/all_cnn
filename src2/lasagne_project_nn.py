@@ -510,10 +510,10 @@ def train_nn(train_model, validate_model, test_model,
 
 def errors(y_pred, y):
 
-    if y.ndim != self.y_pred.ndim:
+    if y.ndim != y_pred.ndim:
             raise TypeError(
-                'y should have the same shape as self.y_pred',
-                ('y', y.type, 'y_pred', self.y_pred.type)
+                'y should have the same shape as y_pred',
+                ('y', y.type, 'y_pred', y_pred.type)
             )
     elif y.ndim == y_pred.ndim:
         y_pred = theano.tensor.argmax(y_pred, axis=-1)
