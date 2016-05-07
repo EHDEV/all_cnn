@@ -44,7 +44,7 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     """
     datasets = load_data(
-        simple=False if n_class == 100 else True
+        simple=False if n_class == 100 else True, small=small
     )
 
     rng = np.random.RandomState(23455)
