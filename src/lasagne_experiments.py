@@ -43,8 +43,9 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     :param n_class: Number of classes/output units of final layer (10 vs. 100)
 
     """
-
-    datasets = load_data()
+    datasets = load_data(
+        simple=False if n_class == 100 else True
+    )
 
     rng = np.random.RandomState(23455)
 
@@ -72,9 +73,9 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
     tdata_size = X_test.eval().shape[0]
     vdata_size = X_val.eval().shape[0]
 
-    X_train = X_train.reshape((data_size, 3, imsize, imsize))
-    X_test = X_test.reshape((tdata_size, 3, imsize, imsize))
-    X_val = X_val.reshape((vdata_size, 3, imsize, imsize))
+    X_train = X_train.reshape((data_size, channel, imsize, imsize))
+    X_test = X_test.reshape((tdata_size, channel, imsize, imsize))
+    X_val = X_val.reshape((vdata_size, channel, imsize, imsize))
 
     # Building the all conv network
 
