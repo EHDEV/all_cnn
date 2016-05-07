@@ -6,12 +6,10 @@ import os
 import sys
 import tarfile
 import gzip
-import numpy as np
+import numpy
 import scipy.io
 import theano
 import theano.tensor as T
-
-np.random.seed(200)
 
 def convert_data_format_10(data):
     X = data['data'] / 255.
@@ -33,10 +31,10 @@ def shared_dataset(data_xy, borrow=True):
     variable) would lead to a large decrease in performance.
     """
     data_x, data_y = data_xy
-    shared_x = theano.shared(np.asarray(data_x,
+    shared_x = theano.shared(numpy.asarray(data_x,
                                            dtype=theano.config.floatX),
                              borrow=borrow)
-    shared_y = theano.shared(np.asarray(data_y,
+    shared_y = theano.shared(numpy.asarray(data_y,
                                            dtype=theano.config.floatX),
                              borrow=borrow)
     # When storing data on the GPU it has to be stored as floats
@@ -49,7 +47,7 @@ def shared_dataset(data_xy, borrow=True):
     return shared_x, T.cast(shared_y, 'int32')
 
 
-def load_data(simple=True, theano_shared=True, small=True):
+def load_data(simple=True, theano_shared=True):
     '''
     Load the ATIS dataset
 
@@ -117,13 +115,13 @@ def load_data(simple=True, theano_shared=True, small=True):
         b5, b5_l = convert_data_format_10(b5)
         bt, bt_l = convert_data_format_10(bt)
 
-        btrain = np.concatenate((b1,
+        btrain = numpy.concatenate((b1,
                                     b2,
                                     b3,
                                     b4,
                                     b5
                                     ), axis=0)
-        btrain_labels = np.concatenate((
+        btrain_labels = numpy.concatenate((
             b1_l,
             b2_l,
             b3_l,
@@ -152,12 +150,6 @@ def load_data(simple=True, theano_shared=True, small=True):
     # Extract validation dataset from train dataset
     valid_set = [x[-(train_set_len // 10):] for x in train_set]
     train_set = [x[:-(train_set_len // 10)] for x in train_set]
-
-    import pdb; pdb.set_trace()
-    if small:
-        valid_set = [x[np.random.choice(len(valid_set[1]) // 10, replace=False)] for x in valid_set]
-        train_set = [x[np.random.choice(train_set_len // 10, replace=False)] for x in train_set]
-        test_set = [x[np.random.choice(len(test_set[1]) // 10, replace=False)] for x in test_set]
 
     if theano_shared:
         test_set_x, test_set_y = shared_dataset(test_set)
