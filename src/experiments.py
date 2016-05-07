@@ -10,7 +10,7 @@ from project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
 def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1e-3, conv_arch=all_CNN_C, n_class=10,
-                   batch_size=128, verbose=False, filter_size=(3,3), small=True):
+                   batch_size=128, verbose=False, filter_size=(3,3)):
     """
     Wrapper function for testing the all convolutional networks implemented here
 
@@ -44,7 +44,7 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
 
     """
     datasets = load_data(
-        simple=False if n_class == 100 else True, small=small
+        simple=False if n_class == 100 else True
     )
 
     rng = np.random.RandomState(23455)
