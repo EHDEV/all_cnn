@@ -110,7 +110,7 @@ def ConvPool_CNN_A(input_var=None, filter_size=(3,3)):
                 num_units=10,
                 nonlinearity=lasagne.nonlinearities.softmax)
     print(lasagne.layers.get_output_shape(network))
-    
+
     return network
 
 def Strided_CNN_C(input_var=None, filter_size=(3,3)):
@@ -190,7 +190,7 @@ def Strided_CNN_C(input_var=None, filter_size=(3,3)):
 def ConvPool_CNN_C(input_var=None, filter_size=(3,3)):
 
     imsize = 32
-    
+
     network = lasagne.layers.InputLayer(
         shape=(None, 3, imsize, imsize),
         stride=(1,1), pad=1,
@@ -222,7 +222,7 @@ def ConvPool_CNN_C(input_var=None, filter_size=(3,3)):
                 stride=(1,1))
 
     print(lasagne.layers.get_output_shape(network))
-    
+
     network = lasagne.layers.MaxPool2DLayer(
         network,
         pool_size=(3, 3),
@@ -255,7 +255,7 @@ def ConvPool_CNN_C(input_var=None, filter_size=(3,3)):
                 pad=1,
                 stride=(1,1))
     print(lasagne.layers.get_output_shape(network))
-    
+
     network = lasagne.layers.MaxPool2DLayer(network, pool_size=(3, 3), stride=2,pad=1)
     print(lasagne.layers.get_output_shape(network))
 
@@ -300,7 +300,7 @@ def ConvPool_CNN_C(input_var=None, filter_size=(3,3)):
 def all_CNN_C(input_var=None, filter_size=(3,3)):
 
     imsize = 32
-    
+
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1,1), pad=1,input_var=input_var)
 
     print(lasagne.layers.get_output_shape(network))
@@ -508,50 +508,18 @@ def train_nn(train_model, validate_model, test_model,
            calframe[1][3] +
            ' ran for %.2fm' % ((end_time - start_time) / 60.)), file=sys.stderr)
 
-def categorical_accuracy(predictions, targets, top_k=1):
-    """Computes the categorical accuracy between predictions and targets.
-    .. math:: L_i = \\mathbb{I}(t_i = \\operatorname{argmax}_c p_{i,c})
-    Can be relaxed to allow matches among the top :math:`k` predictions:
-    .. math::
-        L_i = \\mathbb{I}(t_i \\in \\operatorname{argsort}_c (-p_{i,c})_{:k})
-    Parameters
-    ----------
-    predictions : Theano 2D tensor
-        Predictions in (0, 1), such as softmax output of a neural network,
-        with data points in rows and class probabilities in columns.
-    targets : Theano 2D tensor or 1D tensor
-        Either a vector of int giving the correct class index per data point
-        or a 2D tensor of 1 hot encoding of the correct class in the same
-        layout as predictions
-    top_k : int
-        Regard a prediction to be correct if the target class is among the
-        `top_k` largest class probabilities. For the default value of 1, a
-        prediction is correct only if the target class is the most probable.
-    Returns
-    -------
-    Theano 1D tensor
-        An expression for the item-wise categorical accuracy in {0, 1}
-    Notes
-    -----
-    This is a strictly non differential function as it includes an argmax.
-    This objective function should never be used with a gradient calculation.
-    It is intended as a convenience for validation and testing not training.
-    To obtain the average accuracy, call :func:`theano.tensor.mean()` on the
-    result, passing ``dtype=theano.config.floatX`` to compute the mean on GPU.
-    """
-    if targets.ndim == predictions.ndim:
-        targets = theano.tensor.argmax(targets, axis=-1)
-    elif targets.ndim != predictions.ndim - 1:
-        raise TypeError('rank mismatch between targets and predictions')
-    if top_k == 1:
-        # standard categorical accuracy
-        top = theano.tensor.argmax(predictions, axis=-1)
-        return theano.tensor.neq(top, targets)
-    else:
-        # top-k accuracy
-        top = theano.tensor.argsort(predictions, axis=-1)
-        # (Theano cannot index with [..., -top_k:], we need to simulate that)
-        top = top[[slice(None) for _ in range(top.ndim - 1)] +
-                  [slice(-top_k, None)]]
-        targets = theano.tensor.shape_padaxis(targets, axis=-1)
-        return theano.tensor.any(theano.tensor.eq(top, targets), axis=-1)
+def errors(y_pred, y):
+
+    if y.ndim != self.y_pred.ndim:
+            raise TypeError(
+                'y should have the same shape as self.y_pred',
+                ('y', y.type, 'y_pred', self.y_pred.type)
+            )
+    elif y.ndim == y_pred.ndim:
+        y_pred = theano.tensor.argmax(y_pred, axis=-1)
+
+    if y.dtype.startswith('int'):
+            # the T.neq operator returns a vector of 0s and 1s, where 1
+            # represents a mistake in prediction
+            return T.mean(T.neq(y_pred, y))
+

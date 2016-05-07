@@ -5,7 +5,7 @@ import theano
 import theano.tensor as T
 import lasagne
 import sys
-from lasagne_project_nn import categorical_accuracy
+from lasagne_project_nn import errors
 from lasagne_project_nn import all_CNN_C, ConvPool_CNN_C, Strided_CNN_C, train_nn
 
 
@@ -79,13 +79,13 @@ def run_experiment(lr=0.01, num_epochs=128, nkerns=[96, 192, 10], lambda_decay=1
         train_loss, params, learning_rate=lr, momentum=0.9)
 
     val_prediction = lasagne.layers.get_output(network)
-    val_loss = categorical_accuracy(val_prediction, y)
+    val_loss = errors(val_prediction, y)
     val_loss = val_loss.mean()
     # Create a loss expression for validation/testing. The crucial difference
     # here is that we do a deterministic forward pass through the network,
     # disabling dropout layers.
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
-    test_loss = categorical_accuracy(test_prediction, y)
+    test_loss = errors(test_prediction, y)
 
     test_loss = test_loss.mean()
     # As a bonus, also create an expression for the classification accuracy:
