@@ -86,6 +86,13 @@ def ConvPool_CNN_A(input_var=None, filter_size=(3, 3), n_class=10):
 
 
 def Strided_CNN_C(input_var=None, filter_size=(3, 3), n_class=10):
+    """
+
+    :param input_var:
+    :param filter_size:
+    :param n_class:
+    :return:
+    """
     imsize = 32
 
     network = lasagne.layers.InputLayer(
@@ -160,6 +167,13 @@ def Strided_CNN_C(input_var=None, filter_size=(3, 3), n_class=10):
 
 
 def ConvPool_CNN_C(input_var=None, filter_size=(3, 3), n_class=10):
+    """
+
+    :param input_var:
+    :param filter_size:
+    :param n_class:
+    :return:
+    """
     imsize = 32
 
     network = lasagne.layers.InputLayer(
@@ -269,6 +283,13 @@ def ConvPool_CNN_C(input_var=None, filter_size=(3, 3), n_class=10):
 
 
 def all_CNN_C(input_var=None, filter_size=(3, 3), n_class=10):
+    """
+
+    :param input_var:
+    :param filter_size:
+    :param n_class:
+    :return:
+    """
     imsize = 32
 
     network = lasagne.layers.InputLayer(shape=(None, 3, imsize, imsize), stride=(1, 1), pad=1, input_var=input_var)
