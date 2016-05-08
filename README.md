@@ -18,7 +18,6 @@ _Ciphar-10 and Ciphar-100_ image datasets are used
 
 To run experiments, run the experiments.notebook.ipynb notebook and follow the examples to train each type of model
 
-### Who do I talk to? ###
+### Contributors ###
 
-* Repo owner or admin
-* Other community or team contact
+Elias Hussen and Dan Rosenthal
