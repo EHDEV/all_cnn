@@ -15,43 +15,14 @@ from theano.tensor.nnet import conv2d
 from theano.tensor.signal import downsample
 
 
-def relu(x, alpha=0):
-    """
-    Compute the element-wise rectified linear activation function.
-    .. versionadded:: 0.7.1
-    Parameters
-    ----------
-    x : symbolic tensor
-        Tensor to compute the activation function for.
-    alpha : scalar or tensor, optional
-        Slope for negative input, usually between 0 and 1. The default value
-        of 0 will lead to the standard rectifier, 1 will lead to
-        a linear activation function, and any value in between will give a
-        leaky rectifier. A shared variable (broadcastable against `x`) will
-        result in a parameterized rectifier with learnable slope(s).
-    Returns
-    -------
-    symbolic tensor
-        Element-wise rectifier applied to `x`.
-    Notes
-    -----
-    This is numerically equivalent to ``T.switch(x > 0, x, alpha * x)``
-    (or ``T.maximum(x, alpha * x)`` for ``alpha < 1``), but uses a faster
-    formulation or an optimized Op, so we encourage to use this function.
-    """
-    # This is probably the fastest implementation for GPUs. Both the forward
-    # pass and the gradient get compiled into a single GpuElemwise call.
-    # TODO: Check if it's optimal for CPU as well; add an "if" clause if not.
-    # TODO: Check if there's a faster way for the gradient; create an Op if so.
-    if alpha == 0:
-        return 0.5 * (x + abs(x))
-    else:
-        f1 = 0.5 * (1 + alpha)
-        f2 = 0.5 * (1 - alpha)
-        return f1 * x + f2 * abs(x)
-
-
 def ConvPool_CNN_A(input_var=None, filter_size=(3, 3), n_class=10):
+    """
+    Implementation of the baseline ConvPool-CNN-A model
+    :param input_var:
+    :param filter_size:
+    :param n_class:
+    :return:
+    """
     imsize = 32
 
     network = lasagne.layers.InputLayer(
@@ -522,50 +493,3 @@ def errors(y_pred, y):
         return T.mean(T.neq(y_pred, y))
 
 
-def categorical_accuracy(predictions, targets, top_k=1):
-    """Computes the categorical accuracy between predictions and targets.
-    .. math:: L_i = \\mathbb{I}(t_i = \\operatorname{argmax}_c p_{i,c})
-    Can be relaxed to allow matches among the top :math:`k` predictions:
-    .. math::
-        L_i = \\mathbb{I}(t_i \\in \\operatorname{argsort}_c (-p_{i,c})_{:k})
-    Parameters
-    ----------
-    predictions : Theano 2D tensor
-        Predictions in (0, 1), such as softmax output of a neural network,
-        with data points in rows and class probabilities in columns.
-    targets : Theano 2D tensor or 1D tensor
-        Either a vector of int giving the correct class index per data point
-        or a 2D tensor of 1 hot encoding of the correct class in the same
-        layout as predictions
-    top_k : int
-        Regard a prediction to be correct if the target class is among the
-        `top_k` largest class probabilities. For the default value of 1, a
-        prediction is correct only if the target class is the most probable.
-    Returns
-    -------
-    Theano 1D tensor
-        An expression for the item-wise categorical accuracy in {0, 1}
-    Notes
-    -----
-    This is a strictly non differential function as it includes an argmax.
-    This objective function should never be used with a gradient calculation.
-    It is intended as a convenience for validation and testing not training.
-    To obtain the average accuracy, call :func:`theano.tensor.mean()` on the
-    result, passing ``dtype=theano.config.floatX`` to compute the mean on GPU.
-    """
-    if targets.ndim == predictions.ndim:
-        targets = theano.tensor.argmax(targets, axis=-1)
-    elif targets.ndim != predictions.ndim - 1:
-        raise TypeError('rank mismatch between targets and predictions')
-    if top_k == 1:
-        # standard categorical accuracy
-        top = theano.tensor.argmax(predictions, axis=-1)
-        return theano.tensor.neq(top, targets)
-    else:
-        # top-k accuracy
-        top = theano.tensor.argsort(predictions, axis=-1)
-        # (Theano cannot index with [..., -top_k:], we need to simulate that)
-        top = top[[slice(None) for _ in range(top.ndim - 1)] +
-                  [slice(-top_k, None)]]
-        targets = theano.tensor.shape_padaxis(targets, axis=-1)
-        return theano.tensor.any(theano.tensor.eq(top, targets), axis=-1)
