@@ -3,7 +3,8 @@
 
 ### The All Convolutional Net ###
 
-* This is the implementation of The All Convolutional Net Paper where all layers of the neural net are conv layers without downsampling. Instead, we test 1) increasing stride of the layer before the pool and 2) Use an additional conv layer with a larger stride
+* This is the implementation of The All Convolutional Net Paper where all layers of the neural net are conv layers no pool layer added. We compare three implementations of a convolutional neural net. 1) Baseline, regular conv->pool->conv->pool... architecture 2) Removing all pool layers from (1) but with increased stride in each of the conv layers right before the pool layers. 2) Replace all pool layers with a conv layer with increased stride. 
+
 (http://arxiv.org/abs/1412.6806)
 Version 0.1
 
