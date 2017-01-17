@@ -5,9 +5,9 @@
 
 This is the implementation of The All Convolutional Net Paper where all layers of the neural net are conv layers no pool layer added. We compare three implementations of a convolutional neural net. 
 
-1) Baseline, regular conv->pool->conv->pool... architecture 
-2) Removing all pool layers from (1) but with increased stride in each of the conv layers right before the pool layers. 
-3) Replace all pool layers with a conv layer with increased stride. 
+1. Baseline, regular conv->pool->conv->pool... architecture 
+2. Removing all pool layers from (1) but with increased stride in each of the conv layers right before the pool layers. 
+3. Replace all pool layers with a conv layer with increased stride. 
 
 #### Version:
 
